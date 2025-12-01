@@ -14,20 +14,23 @@ University of California, Santa Cruz
 </div>
 
 
-This repository contains implementations for **PALMS** and **PALMS+**, two systems for previous-visit-free indoor localization using mobile smartphones.
+This repository contains implementations for **PALMS** and **PALMS+**, two systems for previous-visit-free indoor localization using comodity mobile devices.
 
-**PALMS** enables indoor localization with a one-time camera/LiDAR scan, IMU sensors, and the floor plan of the indoor space.
-
-**PALMS+** is the next-generation extension that replaces LiDAR with monocular depth estimation, reconstructing scale-aligned 3D point clouds from RGB images for more robust localization.
+**PALMS** localizes a user within a known floor plan using a one-time 3D rotational scan of the local environment (e.g. via ARKit LiDAR or similar) and IMU-based odometry. 
 
 ![PALMS Architecture](./images/IPIN%202024%20Visualizations.svg)
+
+**PALMS+** extends PALMS by replacing LiDAR with monocular depth estimation, enabling structure-from-motion and depth fusion from RGB-only images. It reconstructs a scale-aligned global point cloud and maintains compatibility with the PALMS localization pipeline, supporting broader device compatibility without the need for depth sensors.
+
+![PALMS+ Architecture](./images/palms+.png)
+
 
 <!-- TODO: Add PALMS+ architecture visualization -->
 <!-- ![PALMS+ Architecture](./images/PALMS+_Architecture.png) -->
 
 ## News
-- **2025-11-12:** **PALMS+ accepted to WACV 2026 (Application Track)!** [[arXiv](https://arxiv.org/abs/2511.09724)]
-- **2024-10-17:** Our presentation of the paper "PALMS: Plane-based Accessible Indoor Localization Using Mobile Smartphones" has received the [Best Presentation award](https://ipin-conference.org/2024/awardees/) at IPIN 2024 - the 14th International Conference on Indoor Positioning and Indoor Navigation in Hong Kong!
+- **2025-11-12:** **PALMS+ accepted to WACV 2026 (Application Track)!**
+- **2024-10-17:** Our presentation of the PALMS paper has received the [Best Presentation award](https://ipin-conference.org/2024/awardees/) at IPIN 2024!
 - **2024-07-29:** **PALMS** paper accepted to IPIN 2024!
 
 
@@ -41,7 +44,7 @@ This repository contains implementations for **PALMS** and **PALMS+**, two syste
 - Particle filter initialization using the Certainly Empty Space (CES) constraint
 - Principal orientation matching for improved accuracy
 - No need for prior environmental fingerprinting
-- Scalable and practical approach for indoor wayfinding
+- Real-time localization without external infrastructure or pre-built database
 
 ### 🚀 PALMS+
 
@@ -55,7 +58,7 @@ This repository contains implementations for **PALMS** and **PALMS+**, two syste
 - Outperforms PALMS and F³Loc in stationary localization accuracy
 
 <!-- TODO: Add PALMS+ results visualization -->
-<!-- ![PALMS+ Results](./images/PALMS+_Results.png) -->
+![PALMS+ Examples](./images/palms+_examples.png)
 
 ## Installation
 
@@ -86,8 +89,8 @@ We recommend using a conda environment for managing dependencies:
 
 ```bash
 # Create and activate a conda environment (optional but recommended)
-conda create -n plane python=3.9
-conda activate plane
+conda create -n palms python=3.10
+conda activate palms
 
 # Install dependencies
 pip install -r requirements.txt
@@ -99,28 +102,19 @@ The `requirements.txt` file contains all necessary packages with tested versions
 
 The PALMS+ method requires the Depth Pro monocular depth estimation model. You need to:
 
-1. Clone the Depth Pro repository into `observation_module/ml-depth-pro/`:
+1. Clone the Depth Pro repository into `ml-depth-pro/`:
    ```bash
-   cd observation_module
-   git clone https://github.com/baegwangbin/DPT.git ml-depth-pro
-   cd ml-depth-pro
+   git clone https://github.com/apple/ml-depth-pro.git
    ```
 
-2. Download the Depth Pro checkpoint and place it in the `checkpoints/` directory:
+2. Follow the instructions in the Depth Pro repository to download the Depth Pro checkpoint and place it in the `checkpoints/` directory:
    ```bash
    # Download depth_pro.pt from the Depth Pro repository
    # Place it in: checkpoints/depth_pro.pt
    ```
 
-Alternatively, you can use other monocular depth estimation models by modifying `observation_module/depth.py`.
+Alternatively, you can use other monocular depth estimation models.
 
-### Step 4: Verify Installation
-
-You can test the installation by running:
-
-```bash
-python -c "import numpy, torch, open3d, cv2; print('Installation successful!')"
-```
 
 ## Usage
 
@@ -136,12 +130,6 @@ python test_palms.py --config configs/palms_config.yaml [--visualize_palms]
 
 **Configuration file**: `configs/palms_config.yaml`
 
-**Key parameters**:
-- `fp_dir`: Directory containing floor plan CSV files
-- `data_dir`: Directory containing tracking data and observations
-- `pf_config`: Particle filter settings (particle number, noise parameters, etc.)
-- `CES_config`: Certainly Empty Space kernel configuration
-
 ### 2. PALMS+ Algorithm (`test_pp.py`)
 
 Runs PALMS+ using depth estimation and 3D point cloud reconstruction for single-shot localization.
@@ -152,17 +140,9 @@ python test_pp.py --config configs/pp_custom_config.yaml [--visualize_obs] [--vi
 
 **Configuration file**: `configs/pp_custom_config.yaml` or `configs/pp_s3d_config.yaml`
 
-**Key parameters**:
-- `method`: "PALMS" or "PALMS+"
-- `dataset`: "custom", "pano_sample", or "s3d"
-- `mde`: Depth estimation model ("dp" for Depth Pro)
-- `scale_alignment_mode`: Point cloud alignment method
-- `scale_range`: Scale sweep range for robust matching
-- `orn_slice`: Number of orientation slices (0 for principal orientations)
-
 ### 3. PALMS+ Sequential Tracking (`test_pp_seq.py`)
 
-Runs PALMS+ with sequential particle filter tracking for continuous localization.
+Runs PALMS+ with sequential particle filter tracking for sequential localization.
 
 ```bash
 python test_pp_seq.py --config configs/pp_seq_config.yaml [--visualize_obs] [--visualize_pcd] [--visualize_heatmap] [--cache_data]
@@ -170,10 +150,6 @@ python test_pp_seq.py --config configs/pp_seq_config.yaml [--visualize_obs] [--v
 
 **Configuration file**: `configs/pp_seq_config.yaml`
 
-**Additional parameters**:
-- `tracking_data_source`: "ARKit" or "RoNIN"
-- `tracking_data_dir`: Directory containing odometry tracking data
-- `cache_data`: Cache heatmaps to speed up repeated runs
 
 ## Configuration Files
 
@@ -192,8 +168,8 @@ Configuration files are YAML files that control all aspects of the experiments. 
 - `init_method`: Initialization method - "palms", "uniform", or "uni_ori"
 - `pf_init_method`: Particle selection - "top" or "random"
 - `particle_num`: Number of particles (typically 500-2000)
-- `mag_sigma`: Magnetometer noise standard deviation
-- `angle_sigma`: Orientation noise standard deviation
+- `mag_sigma`: Odometry magnitude noise standard deviation
+- `angle_sigma`: Odometry orientation noise standard deviation
 - `drift_sigma`: Drift noise standard deviation
 - `resample_radius`: Resampling radius in meters
 
@@ -216,7 +192,7 @@ Configuration files are YAML files that control all aspects of the experiments. 
   - "ground": Use ground plane only
   - "None": No alignment
 - `mask_depth`: Mask depth values based on semantic classes
-- `remove_flying_particles`: Remove outlier points in point cloud
+- `remove_flying_particles`: Remove flying particle artifacts in point cloud
 
 ## Dataset Preparation
 
@@ -297,18 +273,6 @@ PALMS-Plane-based-Accessible-Indoor-Localization-Using-Mobile-Smartphones/
 ```
 
 ## Troubleshooting
-
-### Common Issues
-
-1. **Import errors**: Make sure all dependencies are installed and you're using Python 3.7+.
-
-2. **CUDA/GPU issues**: If you encounter CUDA errors, try setting `device: "cpu"` in your config file.
-
-3. **Depth Pro model not found**: Ensure the Depth Pro model is properly set up in `observation_module/ml-depth-pro/` and the checkpoint is in `checkpoints/depth_pro.pt`.
-
-4. **File not found errors**: Check that all paths in your config file are correct and relative to the project root.
-
-5. **Empty heatmaps**: This usually indicates a mismatch between observation and floor plan. Try adjusting `scale_range` or `orn_slice` parameters.
 
 ## Contact
 
