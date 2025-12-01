@@ -81,7 +81,11 @@ pf_config:
 # Monocular depth estimation model: "dp" (Depth Pro)
 mde: "dp"
 
-# Point cloud scale alignment mode: "ground_overlap", "ground", "all", or "None"
+# Point cloud scale alignment mode:
+#   "ground_overlap": Use ground plane and view overlaps for alignment (recommended)
+#   "ground": Use ground plane only
+#   "all": Optimize all views at the same time
+#   "None": No scale alignment
 scale_alignment_mode: "ground_overlap"
 
 # Mask depth values based on semantic classes

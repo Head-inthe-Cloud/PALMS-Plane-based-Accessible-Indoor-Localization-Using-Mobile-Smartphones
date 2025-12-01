@@ -185,8 +185,8 @@ Configuration files are YAML files that control all aspects of the experiments. 
 
 - `mde`: Monocular depth estimation model ("dp" for Depth Pro)
 - `scale_alignment_mode`: Point cloud alignment method
-  - "all": Use all alignment methods
-  - "ground_overlap": Use ground plane overlap
+  - "all": Optimize all views at the same time
+  - "ground_overlap": Use ground plane and view overlaps for alignment
   - "ground": Use ground plane only
   - "None": No alignment
 - `mask_depth`: Mask depth values based on semantic classes
