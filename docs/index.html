@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PALMS & PALMS+: Plane-based Accessible Indoor Localization Using Mobile Smartphones - Research project from UC Santa Cruz">
+    <title>PALMS & PALMS+ | Plane-based Accessible Indoor Localization</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>PALMS & PALMS+</h1>
+            <p class="authors">
+                <a href="http://yunqiancheng.cloud/">Yunqian Cheng</a> · 
+                <a href="https://github.com/Head-inthe-Cloud">Benjamin Princen</a> · 
+                <a href="https://users.soe.ucsc.edu/~manduchi/">Roberto Manduchi</a>
+            </p>
+            <p class="institution">University of California, Santa Cruz</p>
+            <div class="badges">
+                <a href="https://escholarship.org/uc/item/7bw6797s">
+                    <img src='https://img.shields.io/badge/Paper-PALMS-red' alt='PALMS Paper PDF'>
+                </a>
+                <a href="https://arxiv.org/abs/2511.09724">
+                    <img src='https://img.shields.io/badge/Paper-PALMS+-blue' alt='PALMS+ Paper PDF'>
+                </a>
+                <a href='https://github.com/Head-inthe-Cloud/PALMS-Plane-based-Accessible-Indoor-Localization-Using-Mobile-Smartphones'>
+                    <img src='https://img.shields.io/badge/Project_Page-GitHub-green' alt='Project Page'>
+                </a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#news">News</a></li>
+                    <li><a href="#overview">Overview</a></li>
+                    <li><a href="#architecture">Architecture</a></li>
+                    <li><a href="#demo">Demo</a></li>
+                    <li><a href="#video">Video</a></li>
+                    <li><a href="#results">Results</a></li>
+                    <li><a href="#installation">Installation</a></li>
+                    <li><a href="#usage">Usage</a></li>
+                    <li><a href="#dataset">Dataset</a></li>
+                    <li><a href="#citation">Citation</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="news">
+            <h2>News</h2>
+            <div class="news-item">
+                <strong>2025-11-12:</strong> <strong>PALMS+</strong> accepted to WACV 2026 (Application Track)!
+            </div>
+            <div class="news-item">
+                <strong>2024-10-17:</strong> Our presentation of the <strong>PALMS</strong> paper has received the <a href="https://ipin-conference.org/2024/awardees/">Best Presentation award</a> at IPIN 2024!
+            </div>
+            <div class="news-item">
+                <strong>2024-07-29:</strong> <strong>PALMS</strong> paper accepted to IPIN 2024!
+            </div>
+        </section>
+
+        <section id="overview">
+            <h2>Overview</h2>
+            <p>This repository contains implementations for <strong>PALMS</strong> and <strong>PALMS+</strong>, two systems for previous-visit-free indoor localization using commodity mobile devices.</p>
+            
+            <div class="overview-grid">
+                <div class="overview-card">
+                    <h3>🧭 PALMS</h3>
+                    <p><strong>PALMS</strong> (Plane-based Accessible Indoor Localization Using Mobile Smartphones) is an innovative system designed for indoor global localization and relocalization using publicly available floor plans. This project leverages smartphone LiDAR capabilities to enhance accessibility for all users, including those with visual impairments.</p>
+                    <h4>Key features:</h4>
+                    <ul>
+                        <li>Particle filter initialization using the Certainly Empty Space (CES) constraint</li>
+                        <li>Principal orientation matching for improved accuracy</li>
+                        <li>No need for prior environmental fingerprinting</li>
+                        <li>Real-time localization without external infrastructure or pre-built database</li>
+                    </ul>
+                </div>
+                
+                <div class="overview-card">
+                    <h3>🚀 PALMS+</h3>
+                    <p><strong>PALMS+</strong> (Modular Image-Based Floor Plan Localization Leveraging Depth Foundation Model) is the next-generation extension of PALMS, accepted to <strong>WACV 2026</strong>. PALMS+ replaces LiDAR with a foundation monocular depth estimation model (Depth Pro), reconstructing scale-aligned 3D point clouds from RGB images for more robust localization.</p>
+                    <h4>Key features:</h4>
+                    <ul>
+                        <li>Fully <strong>image-based</strong> (no LiDAR required)</li>
+                        <li><strong>Modular</strong> architecture adaptable to future depth models</li>
+                        <li>Produces a <strong>probabilistic posterior</strong> usable for both direct and sequential localization</li>
+                        <li>Demonstrated robustness across <strong>Structured3D</strong> and custom campus datasets</li>
+                        <li>Outperforms PALMS and F³Loc in stationary localization accuracy</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="architecture">
+            <h2>Architecture</h2>
+            <div class="image-container">
+                <h3>PALMS Architecture</h3>
+                <img src="images/IPIN%202024%20Visualizations.svg" alt="PALMS Architecture Diagram">
+            </div>
+            <div class="image-container">
+                <h3>PALMS+ Architecture</h3>
+                <img src="images/palms+.png" alt="PALMS+ Architecture Diagram">
+            </div>
+            <div class="image-container">
+                <h3>PALMS+ Examples</h3>
+                <img src="images/palms+_examples.png" alt="PALMS+ Examples">
+            </div>
+        </section>
+
+        <section id="demo">
+            <h2>Demo</h2>
+            <div class="demo-section">
+                <p class="placeholder">Interactive demo coming soon! Check back later or visit our <a href="https://github.com/Head-inthe-Cloud/PALMS-Plane-based-Accessible-Indoor-Localization-Using-Mobile-Smartphones">GitHub repository</a> to try the code yourself.</p>
+            </div>
+        </section>
+
+        <section id="video">
+            <h2>Video</h2>
+            <div class="video-section">
+                <p class="placeholder">Video demonstrations coming soon! Stay tuned for updates.</p>
+            </div>
+        </section>
+
+        <section id="results">
+            <h2>Results & Benchmarks</h2>
+            <div class="results-section">
+                <p>PALMS+ outperforms PALMS and F³Loc in stationary localization accuracy. Detailed results and benchmarks are available in the papers:</p>
+                <ul style="text-align: left; display: inline-block;">
+                    <li><a href="https://escholarship.org/uc/item/7bw6797s">PALMS Paper</a> - IPIN 2024</li>
+                    <li><a href="https://arxiv.org/abs/2511.09724">PALMS+ Paper</a> - WACV 2026</li>
+                </ul>
+                <div class="image-grid" style="margin-top: 2rem;">
+                    <div>
+                        <h4>Ground Truth</h4>
+                        <img src="images/gt.png" alt="Ground Truth Visualization">
+                    </div>
+                    <div>
+                        <h4>Heatmap</h4>
+                        <img src="images/heatmap.png" alt="Heatmap Visualization">
+                    </div>
+                    <div>
+                        <h4>Animation</h4>
+                        <img src="images/BE_Session_1744230174.gif" alt="Localization Animation">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="installation">
+            <h2>Installation</h2>
+            
+            <h3>Prerequisites</h3>
+            <ul>
+                <li>Python 3.10</li>
+                <li>CUDA-capable GPU (recommended for depth estimation, but CPU is supported)</li>
+            </ul>
+
+            <h3>Step 1: Clone the Repository</h3>
+            <pre><code>git clone https://github.com/Head-inthe-Cloud/PALMS-Plane-based-Accessible-Indoor-Localization-Using-Mobile-Smartphones.git
+cd PALMS-Plane-based-Accessible-Indoor-Localization-Using-Mobile-Smartphones</code></pre>
+
+            <h3>Step 2: Install Dependencies</h3>
+            <p>We recommend using a conda environment for managing dependencies:</p>
+            <pre><code># Create and activate a conda environment (optional but recommended)
+conda create -n palms python=3.10
+conda activate palms
+
+# Install dependencies
+pip install -r requirements.txt</code></pre>
+            <p>The <code>requirements.txt</code> file contains all necessary packages with tested versions.</p>
+
+            <h3>Step 3: Set Up Depth Pro Model (for PALMS+)</h3>
+            <p>Most of our data already come with pre-computed Depth Pro depth maps. If you want to re-estimate the depth maps, you will need the Depth Pro model:</p>
+            <ol>
+                <li>Clone the Depth Pro repository into <code>ml-depth-pro/</code> and install the Depth Pro module:
+                    <pre><code>git clone https://github.com/apple/ml-depth-pro.git
+cd ml-depth-pro
+pip install -e .</code></pre>
+                </li>
+                <li>Download the Depth Pro checkpoint by running the following command, then move the <code>checkpoints/</code> directory under the main directory:
+                    <pre><code># Download depth_pro.pt using scripts from the Depth Pro repository
+source get_pretrained_models.sh
+
+# Move the directory
+mv ./checkpoints ../checkpoints</code></pre>
+                </li>
+            </ol>
+            <p>Alternatively, you can use other monocular depth estimation models.</p>
+        </section>
+
+        <section id="usage">
+            <h2>Usage</h2>
+            <p>PALMS provides three main scripts for different use cases:</p>
+
+            <h3>1. PALMS Algorithm (<code>test_palms.py</code>)</h3>
+            <p>Runs the original PALMS algorithm using LiDAR/ARKit plane detections with particle filter tracking.</p>
+            <pre><code>python test_palms.py --config configs/palms_config.yaml --visualize_palms --run_example</code></pre>
+            <p><strong>Configuration file</strong>: <code>configs/palms_config.yaml</code></p>
+
+            <h3>2. PALMS+ Algorithm (<code>test_pp.py</code>)</h3>
+            <p>Runs PALMS+ using depth estimation and 3D point cloud reconstruction for single-shot localization.</p>
+            <pre><code>python test_pp.py --config configs/pp_custom_config.yaml --visualize_obs --visualize_pcd --visualize_heatmap --run_example</code></pre>
+            <p><strong>Configuration file</strong>: <code>configs/pp_custom_config.yaml</code> or <code>configs/pp_s3d_config.yaml</code></p>
+
+            <h3>3. PALMS+ Sequential Tracking (<code>test_pp_seq.py</code>)</h3>
+            <p>Runs PALMS+ with sequential particle filter tracking for sequential localization.</p>
+            <pre><code>python test_pp_seq.py --config configs/pp_seq_config.yaml --visualize_obs --visualize_pcd --visualize_heatmap --visualize_palms --cache_data --run_example</code></pre>
+            <p><strong>Configuration file</strong>: <code>configs/pp_seq_config.yaml</code></p>
+
+            <h3>Visualizations</h3>
+            <p>Using the <code>--visualize_palms</code> flag, GIFs will be saved to the <code>results</code> folder, along with other visualizations. You may also use the <code>visualize()</code> function to visualize the results.</p>
+
+            <h3>Configuration Files</h3>
+            <p>Configuration files are YAML files that control all aspects of the experiments. Here's a guide to the main parameters:</p>
+            
+            <h4>General Settings</h4>
+            <ul>
+                <li><code>resolution</code>: Map resolution in meters per pixel (default: 0.1)</li>
+                <li><code>num_iterations</code>: Number of iterations to run (for statistical evaluation)</li>
+                <li><code>method</code>: Algorithm to use - "PALMS" or "PALMS+"</li>
+                <li><code>dataset</code>: Dataset type - "custom", "pano_sample", or "s3d"</li>
+            </ul>
+
+            <h4>Particle Filter Settings (<code>pf_config</code>)</h4>
+            <ul>
+                <li><code>pf_global_init</code>: Use global initialization (True) or local initialization (False)</li>
+                <li><code>init_method</code>: Initialization method - "palms", "uniform", or "uni_ori"</li>
+                <li><code>pf_init_method</code>: Particle selection - "percentile" or "random"</li>
+                <li><code>particle_num</code>: Number of particles (typically 500-2000)</li>
+                <li><code>mag_sigma</code>: Odometry magnitude noise standard deviation</li>
+                <li><code>angle_sigma</code>: Odometry orientation noise standard deviation</li>
+                <li><code>drift_sigma</code>: Drift noise standard deviation</li>
+                <li><code>resample_radius</code>: Resampling radius in meters</li>
+            </ul>
+
+            <h4>Layout Matching Settings</h4>
+            <ul>
+                <li><code>alpha</code>: Weighting factor for heatmap generation</li>
+                <li><code>gaussian_kernel_config</code>: [kernel_size, sigma] for CES kernel</li>
+                <li><code>orn_slice</code>: Number of orientation slices (0 = principal orientations, >0 = top-k relative orientations)</li>
+                <li><code>scale_range</code>: Scale sweep range (for PALMS+ only)
+                    <ul>
+                        <li><code>start</code>: Starting scale factor</li>
+                        <li><code>stop</code>: Ending scale factor (exclusive)</li>
+                        <li><code>step</code>: Step size</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h4>PALMS+ Specific Settings</h4>
+            <ul>
+                <li><code>mde</code>: Monocular depth estimation model ("dp" for Depth Pro)</li>
+                <li><code>scale_alignment_mode</code>: Point cloud alignment method
+                    <ul>
+                        <li>"all": Optimize all views at the same time</li>
+                        <li>"ground_overlap": Use ground plane and view overlaps for alignment</li>
+                        <li>"ground": Use ground plane only</li>
+                        <li>"None": No alignment</li>
+                    </ul>
+                </li>
+                <li><code>mask_depth</code>: Mask depth values based on semantic classes</li>
+                <li><code>remove_flying_particles</code>: Remove flying particle artifacts in point cloud</li>
+            </ul>
+        </section>
+
+        <section id="dataset">
+            <h2>Dataset</h2>
+            <p>The dataset is organized into several main components, each serving different purposes in the PALMS and PALMS+ localization pipeline:</p>
+
+            <h3>Dataset Structure</h3>
+            <pre><code>datasets/
+├── main_dataset/        # Full recording sessions
+├── pano_samples/        # Data sampled from panoramas
+├── maps/                # Floor plan geometry files
+├── trajectories/        # IMU-based or ARKit-VIO odometry tracking data 
+└── structured3d/        # Contains an example of the Structured3D synthetic indoor scenes</code></pre>
+
+            <h3>1. main_dataset/</h3>
+            <p>Contains complete recording sessions organized by building/location:</p>
+            <ul>
+                <li><strong>BE</strong> (Baskin Engineering): 19 sessions</li>
+                <li><strong>E2</strong> (Engineering 2): 24 sessions</li>
+                <li><strong>PS</strong> (Physical Sciences): 19 sessions</li>
+                <li><strong>SVC</strong> (Student Volunteer Center): 19 sessions</li>
+            </ul>
+            <p>Each session directory contains:</p>
+            <ul>
+                <li><code>images/</code>: RGB images (`.png`) with LabelMe JSON annotations (semantic labels)</li>
+                <li><code>poses/</code>: Camera pose files (4×4 transformation matrices) for each frame</li>
+                <li><code>intrinsics/</code>: Camera intrinsic matrices (3×3) for each frame</li>
+                <li><code>depths/</code>: Depth data collected using ARKit LiDAR in JSON format</li>
+                <li><code>dp_depths/</code>: Pre-computed Depth Pro depth maps (`.npy` files)</li>
+                <li><code>confidences/</code>: Confidence maps for depth estimation (`.png`)</li>
+                <li><code>detectedPlanes.json</code>: Detected plane information with timestamps and alignment data</li>
+                <li><code>pano.png</code>: Panoramic image of the scene</li>
+                <li><code>label.txt</code>: Ground truth position (x, y, z coordinates)</li>
+                <li><code>metadata.json</code>: Session metadata</li>
+                <li><code>timeStamps.json</code>: Timestamps for each frame</li>
+            </ul>
+
+            <h3>2. pano_samples/</h3>
+            <p>Subset of sessions with panorama-specific data for quick testing and evaluation. Contains the same building structure (BE, E2, PS, SVC) with:</p>
+            <ul>
+                <li>5 sample images per session with corresponding depth maps</li>
+                <li>Camera poses and intrinsics</li>
+                <li>Panorama metadata (FOV, interval, starting angle)</li>
+                <li>Ground truth positions</li>
+            </ul>
+
+            <h3>3. maps/</h3>
+            <p>CSV files containing floor plan geometry for each building:</p>
+            <ul>
+                <li><code>BE.csv</code>, <code>E2.csv</code>, <code>PS.csv</code>, <code>SVC.csv</code>: Building floor plans</li>
+                <li>Format: Each line contains 4 coordinates (x1, y1, x2, y2) representing wall segments/edges</li>
+                <li>Used for layout matching and CES (Certainly Empty Space) constraint generation</li>
+            </ul>
+
+            <h3>4. trajectories/</h3>
+            <p>IMU-based trajectory data organized by building and trajectory ID:</p>
+            <ul>
+                <li>Contains RoNIN raw 2D trajectory data (x, y coordinates over time) in JSON format</li>
+                <li><code>tracking_obs_pairs.csv</code>: Mapping between tracking data and observation sessions
+                    <ul>
+                        <li>Columns: <code>tracking_data_path</code>, <code>obs_data_path</code>, <code>starting_idx</code>, <code>theta</code> (rotation angle)</li>
+                        <li>For details, see <code>utils/prep_trajectories.py</code></li>
+                    </ul>
+                </li>
+                <li>Used for sequential localization with particle filter tracking</li>
+            </ul>
+
+            <h3>5. structured3d/</h3>
+            <p><strong>Note:</strong> The <code>structured3d/</code> folder in this repository is empty. Due to Structured3D's terms of use, we cannot redistribute their data. Users must download the Structured3D dataset directly from the official website.</p>
+            <p><strong>Download Instructions:</strong></p>
+            <ol>
+                <li>Visit the <a href="https://structured3d-dataset.org/">Structured3D dataset website</a></li>
+                <li>Complete the agreement form to accept the Structured3D Terms of Use</li>
+                <li>Download the dataset and extract it to the <code>../datasets/structured3d/</code> directory</li>
+                <li>The dataset should be organized as: <code>structured3d/scene_XXXXX/2D_rendering/...</code></li>
+            </ol>
+
+            <h3>Dataset Availability</h3>
+            <p>We are currently preparing the code and dataset for public release. Releasing the dataset requires extra care as some images contain human subjects. While we have blurred all humans in the images, we are taking extra precautions to ensure our data release is legitimate and complies with all necessary privacy and ethical guidelines. The dataset will be made available once these considerations are fully addressed. Stay tuned!</p>
+
+            <h3>Dataset Preparation</h3>
+            <h4>Data Structure</h4>
+            <p>Your dataset should be organized as follows:</p>
+            <pre><code>your_dataset/
+├── scene_id_1/
+│   └── Session_XXXXX/
+│       ├── images/              # RGB images
+│       ├── intrinsics/          # Camera intrinsic matrices (JSON)
+│       ├── poses/               # Camera poses (JSON)
+│       ├── detectedPlanes.json  # (For PALMS) Detected planes from ARKit
+│       └── label.txt            # Ground truth pose [x, y, theta]
+├── scene_id_2/
+│   └── ...
+└── ...</code></pre>
+
+            <h4>Floor Plans</h4>
+            <p>Floor plans should be CSV files with line segments, where each line represents a wall segment:</p>
+            <ul>
+                <li>Format: <code>x1, y1, x2, y2</code> (start and end points of segment)</li>
+                <li>Place floor plans in a <code>maps/</code> directory (or set <code>PALMS_MAPS_DIR</code> environment variable)</li>
+                <li>Name files as <code>{scene_id}.csv</code> (e.g., <code>BE.csv</code>, <code>PS.csv</code>)</li>
+            </ul>
+
+            <h4>Tracking Data (for Sequential Localization)</h4>
+            <p>For <code>test_pp_seq.py</code>, you need odometry tracking data:</p>
+            <ul>
+                <li>ARKit or RoNIN tracking trajectories in JSON format</li>
+                <li>Pairing file (<code>tracking_obs_pairs.csv</code>) mapping observations to tracking sequences</li>
+            </ul>
+
+            <h4>Example Data</h4>
+            <p>The repository includes example data in <code>example/</code> that you can use to test the installation. Use the <code>--run_example</code> flag to try it out!</p>
+        </section>
+
+        <section id="citation">
+            <h2>Citation</h2>
+            <p>If you find this project useful, please cite the following papers:</p>
+
+            <h3>PALMS (IPIN 2024)</h3>
+            <div class="citation-block">
+                <pre><code>@article{Cheng_Manduchi_2024,
+  title={PALMS: Plane-based Accessible Indoor Localization Using Mobile Smartphones},
+  author={Cheng, Yunqian and Manduchi, Roberto},
+  journal={eScholarship, University of California},
+  url={https://escholarship.org/uc/item/7bw6797s},
+  year={2024},
+  month={Aug}
+}</code></pre>
+            </div>
+
+            <h3>PALMS+ (WACV 2026)</h3>
+            <div class="citation-block">
+                <pre><code>@article{Cheng_Princen_Manduchi_2025,
+  title={PALMS+: Modular Image-Based Floor Plan Localization Leveraging Depth Foundation Model},
+  author={Cheng, Yunqian and Princen, Benjamin and Manduchi, Roberto},
+  journal={arXiv preprint arXiv:2511.09724},
+  year={2025},
+  note={Accepted to IEEE/CVF Winter Conference on Applications of Computer Vision (WACV) 2026, Application Track},
+  url={https://arxiv.org/abs/2511.09724}
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="acknowledgments">
+            <h2>Acknowledgments</h2>
+            
+            <h3>PALMS</h3>
+            <p>Research reported in this publication was supported by the National Eye Institute of the National Institutes of Health under award number R01EY029260-01. The content is solely the responsibility of the authors and does not necessarily represent the official views of the National Institutes of Health.</p>
+
+            <h3>PALMS+</h3>
+            <p>This research was funded in part by the National Eye Institute (NIH) under grant number R01EY036360. The authors would like to thank Loni Halsted-Ruelas for her invaluable assistance with dataset curation and experimental support.</p>
+
+            <h3>Structured3D Dataset</h3>
+            <p>We acknowledge the use of the <a href="https://structured3d-dataset.org/">Structured3D dataset</a> for evaluation purposes. The dataset is provided by Jia Zheng, Junfei Zhang, Jing Li, Rui Tang, Shenghua Gao, and Zihan Zhou. The dataset is released under the <a href="https://structured3d-dataset.org/">Structured3D Terms of Use</a>, permitting use for non-commercial research and educational purposes only. For more information and to download the dataset, please visit their <a href="https://github.com/bertjiazheng/Structured3D">GitHub repository</a>.</p>
+            <p>If you use the Structured3D dataset in your research, please cite:</p>
+            <div class="citation-block">
+                <pre><code>@inproceedings{Structured3D,
+  title     = {Structured3D: A Large Photo-realistic Dataset for Structured 3D Modeling},
+  author    = {Jia Zheng and Junfei Zhang and Jing Li and Rui Tang and Shenghua Gao and Zihan Zhou},
+  booktitle = {Proceedings of The European Conference on Computer Vision (ECCV)},
+  year      = {2020}
+}</code></pre>
+            </div>
+
+            <h3>F³Loc</h3>
+            <p>We acknowledge the F³Loc paper for comparison and benchmarking purposes. F³Loc: Fusion and Filtering for Floorplan Localization by Changan Chen, Rui Wang, Christoph Vogel, and Marc Pollefeys was presented at CVPR 2024. For more information, please refer to the <a href="https://www.microsoft.com/en-us/research/publication/f3loc-fusion-and-filtering-for-floorplan-localization/">paper</a> and <a href="https://arxiv.org/abs/2403.03370">arXiv preprint</a>.</p>
+            <p>If you reference F³Loc in your research, please cite:</p>
+            <div class="citation-block">
+                <pre><code>@inproceedings{chen2024f3loc,
+  title={F $\^{3}$ Loc: Fusion and Filtering for Floorplan Localization},
+  author={Chen, Changan and Wang, Rui and Vogel, Christoph and Pollefeys, Marc},
+  booktitle={IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  year={2024}
+}</code></pre>
+            </div>
+
+            <h3>Depth Pro</h3>
+            <p>PALMS+ utilizes the <a href="https://github.com/apple/ml-depth-pro">Depth Pro</a> model for monocular depth estimation. Depth Pro is a foundation model for zero-shot metric monocular depth estimation, capable of synthesizing high-resolution depth maps with sharpness and high-frequency details. The model produces metric predictions with absolute scale without relying on camera intrinsics metadata. For more information, please refer to the <a href="https://arxiv.org/abs/2410.02073">arXiv preprint</a> and <a href="https://github.com/apple/ml-depth-pro">GitHub repository</a>.</p>
+            <p>If you use Depth Pro in your research, please cite:</p>
+            <div class="citation-block">
+                <pre><code>@inproceedings{Bochkovskii2024:arxiv,
+  author     = {Aleksei Bochkovskii and Ama\"{e}l Delaunoy and Hugo Germain and Marcel Santos and
+               Yichao Zhou and Stephan R. Richter and Vladlen Koltun},
+  title      = {Depth Pro: Sharp Monocular Metric Depth in Less Than a Second},
+  booktitle  = {International Conference on Learning Representations},
+  year       = {2025},
+  url        = {https://arxiv.org/abs/2410.02073},
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="contact">
+            <h2>Contact</h2>
+            <p>For any questions or inquiries, please contact:</p>
+            <ul>
+                <li>Yunqian Cheng: <a href="mailto:ychen827@ucsc.edu">ychen827@ucsc.edu</a></li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024-2025 PALMS & PALMS+ Research Team | University of California, Santa Cruz</p>
+            <p>
+                <a href="https://github.com/Head-inthe-Cloud/PALMS-Plane-based-Accessible-Indoor-Localization-Using-Mobile-Smartphones">GitHub Repository</a> · 
+                <a href="https://github.com/Head-inthe-Cloud/PALMS-Plane-based-Accessible-Indoor-Localization-Using-Mobile-Smartphones/issues">Report Issues</a>
+            </p>
+            <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">
+                ⚠️ <strong>Disclaimer</strong>: The documentation in this repository is partly generated by AI and may contain errors. Please verify any information before relying on it for critical tasks.
+            </p>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
+
