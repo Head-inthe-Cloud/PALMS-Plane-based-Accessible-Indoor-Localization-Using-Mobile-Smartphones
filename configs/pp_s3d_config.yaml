@@ -11,7 +11,7 @@ dataset: "s3d"
 s3d_data_dir: '../Dataset/Structured3D'
 
 # Results output directory
-results_dir: "./results/refactoring_test/pp"
+results_dir: "./results/pp"
 
 # ==========================
 # General configuration

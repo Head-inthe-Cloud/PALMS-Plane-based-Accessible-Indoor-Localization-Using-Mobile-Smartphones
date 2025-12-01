@@ -166,7 +166,7 @@ Configuration files are YAML files that control all aspects of the experiments. 
 
 - `pf_global_init`: Use global initialization (True) or local initialization (False)
 - `init_method`: Initialization method - "palms", "uniform", or "uni_ori"
-- `pf_init_method`: Particle selection - "top" or "random"
+- `pf_init_method`: Particle selection - "percentile" or "random"
 - `particle_num`: Number of particles (typically 500-2000)
 - `mag_sigma`: Odometry magnitude noise standard deviation
 - `angle_sigma`: Odometry orientation noise standard deviation

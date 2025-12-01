@@ -29,7 +29,7 @@ import time
 
 if __name__ == '__main__':
     # Example code for depth estimation
-    image_dir = './example/Session_1744229291/images'
+    image_dir = './example/Session_1744230710/images'
     output_dir = None
     
     image_paths = glob(image_dir + '/*.png')

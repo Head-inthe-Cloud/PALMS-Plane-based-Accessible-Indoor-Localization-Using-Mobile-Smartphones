@@ -56,9 +56,6 @@ checkpoints/
 *.jpg
 *.jpeg
 
-# Example data (excluded from repository)
-example/
-
 # Jupyter Notebooks
 .ipynb_checkpoints/
 *.ipynb

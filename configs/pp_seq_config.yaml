@@ -23,19 +23,19 @@ save_vis: True
 # Data settings
 # ==========================
 # Dataset type: "custom", "pano_sample", or "s3d"
-dataset: "custom"
+dataset: "pano_sample"
 
 # Dataset directory paths
-custom_data_dir: "../Dataset/PALMS+_public/main_dataset"
-pano_sample_data_dir: "../Dataset/PALMS+_public/pano_samples"
-s3d_data_dir: "../Dataset/Structured3D"
-results_dir: "./results/refactoring_test/pp_seq"
+custom_data_dir: "../datasets/main_dataset"
+pano_sample_data_dir: "../datasets/pano_samples"
+s3d_data_dir: "../datasets/Structured3D"
+results_dir: "./results/pp_seq"
 
 # Odometry tracking source: "ARKit" or "RoNIN"
 tracking_data_source: "ARKit"
 
 # Directory containing odometry tracking trajectories
-tracking_data_dir: "../Dataset/PALMS+_public/trajectories"
+tracking_data_dir: "../datasets/trajectories"
 
 # ==========================
 # Particle filter configuration
