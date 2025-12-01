@@ -42,6 +42,12 @@ header {
     position: sticky;
     top: 0;
     z-index: 1000;
+    transition: transform 0.3s ease-in-out;
+    transform: translateY(0);
+}
+
+header.hidden {
+    transform: translateY(-100%);
 }
 
 .header-content {

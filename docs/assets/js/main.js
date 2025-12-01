@@ -48,6 +48,33 @@ document.addEventListener('DOMContentLoaded', function() {
     
     window.addEventListener('scroll', highlightNavigation);
     
+    // Hide/show header on scroll
+    let lastScrollTop = 0;
+    const header = document.querySelector('header');
+    const scrollThreshold = 100; // Minimum scroll distance before hiding
+    
+    function handleHeaderScroll() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        // Only hide/show if scrolled past threshold
+        if (scrollTop > scrollThreshold) {
+            if (scrollTop > lastScrollTop) {
+                // Scrolling down - hide header
+                header.classList.add('hidden');
+            } else {
+                // Scrolling up - show header
+                header.classList.remove('hidden');
+            }
+        } else {
+            // Near top - always show header
+            header.classList.remove('hidden');
+        }
+        
+        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
+    }
+    
+    window.addEventListener('scroll', handleHeaderScroll, { passive: true });
+    
     // Copy citation to clipboard functionality
     const citationBlocks = document.querySelectorAll('.citation-block pre');
     
