@@ -76,3 +76,8 @@ observation_module/ml-depth-pro/
 evaluations/
 exp*/
 gifs/
+
+# Example directory - include all files except .DS_Store
+!example/
+!example/**
+example/**/.DS_Store
