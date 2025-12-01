@@ -11,7 +11,7 @@ University of California, Santa Cruz
 <a href='https://github.com/Head-inthe-Cloud/PALMS-Plane-based-Accessible-Indoor-Localization-Using-Mobile-Smartphones'><img src='https://img.shields.io/badge/Project_Page-GitHub-green' alt='Project Page'></a>
 <!-- <a href='https://head-inthe-cloud.github.io/PALMS-Plane-based-Accessible-Indoor-Localization-Using-Mobile-Smartphones/'><img src='https://img.shields.io/badge/🌐-Project_Website-purple' alt='Project Website'></a> -->
 <!-- <a href=''><img src='https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Demo-blue'></a> -->
-<!-- <a href=''><img src='https://img.shields.io/badge/Dataset-PALMS-yellow' alt='Dataset'></a> -->
+<a href='https://huggingface.co/datasets/Head-inthe-Cloud/ucsc-palms-indoor-localization/tree/main'><img src='https://img.shields.io/badge/Dataset-PALMS-yellow' alt='Dataset'></a>
 </div>
 
 
@@ -324,7 +324,17 @@ IMU-based trajectory data organized by building and trajectory ID:
 
 ### Dataset Availability
 
-We are currently preparing the code and dataset for public release. Releasing the dataset requires extra care as some images contain human subjects. While we have blurred all humans in the images, we are taking extra precautions to ensure our data release is legitimate and complies with all necessary privacy and ethical guidelines. The dataset will be made available once these considerations are fully addressed. Stay tuned!
+The dataset is now available on Hugging Face! You can download it from:
+
+**[🔗 Download Dataset on Hugging Face](https://huggingface.co/datasets/Head-inthe-Cloud/ucsc-palms-indoor-localization/tree/main)**
+
+The dataset includes:
+- Panorama samples (`pano_samples.zip`)
+- Trajectory data (`trajectories.zip`)
+- Floor plan maps (`maps/`)
+- Structured3D dataset structure (`structured3d/`)
+
+For more details about the dataset structure and usage, please refer to the [dataset card](https://huggingface.co/datasets/Head-inthe-Cloud/ucsc-palms-indoor-localization) on Hugging Face.
 
 
 ## Project Structure
