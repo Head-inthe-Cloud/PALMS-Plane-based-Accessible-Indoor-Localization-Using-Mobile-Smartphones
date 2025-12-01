@@ -1,0 +1,83 @@
+# ==========================
+# Experiment configuration
+# ==========================
+# Algorithm method: "PALMS" or "PALMS+"
+method: "PALMS+"
+
+# Dataset type: "custom" or "s3d" (Structured3D)
+dataset: "s3d"
+
+# Directory path for Structured3D dataset
+s3d_data_dir: '../Dataset/Structured3D'
+
+# Results output directory
+results_dir: "./results/refactoring_test/pp"
+
+# ==========================
+# General configuration
+# ==========================
+# Map resolution in meters per pixel (typical: 0.05 - 0.2)
+resolution: 0.1
+
+# Device for computation: "cpu", "cuda", or "mps"
+device: "cpu"
+
+# Task type: "full", "partial", or "single"
+task: "full"
+
+# ==========================
+# PALMS+ specific configuration
+# ==========================
+# Monocular depth estimation model: "dp" (Depth Pro)
+mde: "dp"
+
+# Point cloud scale alignment mode:
+#   "ground_overlap": Use ground plane overlap (recommended)
+#   "ground": Use ground plane only
+#   "all": Try all alignment methods
+#   "overlap": Use overlap-based alignment
+#   "None": No scale alignment
+scale_alignment_mode: "ground_overlap"
+
+# Mask depth values based on semantic classes
+mask_depth: True
+
+# Remove outlier points from point cloud
+remove_flying_particles: False
+
+# Scale range for robust matching (sweep over scales)
+# Format: np.arange(start, stop, step) - stop is EXCLUSIVE
+scale_range:
+  start: 0.9
+  stop: 1.1
+  step: 0.1
+
+# ==========================
+# Layout matching configuration
+# ==========================
+# Weighting factor for heatmap generation (higher = more emphasis on strong matches)
+# For Structured3D, typically use higher values (20-50)
+alpha: 50
+
+# Gaussian kernel configuration: [kernel_size, sigma]
+# kernel_size: Must be odd (e.g., 7, 15, 21)
+# sigma: Standard deviation for smoothing (typical: 1 - 5)
+gaussian_kernel_config: [7, 1]
+
+# ==========================
+# Orientation matching configuration
+# ==========================
+# Maximum distance for matching (meters) - used for F3Loc compatibility
+max_dist: 10
+
+# Orientation slicing:
+#   0: Use 4 principal orientations (PALMS method, faster)
+#   >0: Use top-k relative orientations (more robust, slower)
+#   Typical values: 4, 8, 10, 36
+orn_slice: 10
+
+# ==========================
+# Metrics configuration
+# ==========================
+# Tolerance window in meters for success metrics
+tolerance: 1

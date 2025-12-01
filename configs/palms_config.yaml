@@ -1,0 +1,92 @@
+# ==========================
+# General experiment settings
+# ==========================
+# Map resolution in meters per pixel. Lower values = higher resolution but slower computation.
+# Typical range: 0.05 - 0.2 meters
+resolution: 0.1
+
+# Number of iterations to run for statistical evaluation. Each iteration runs the full pipeline.
+# Use >1 to get average metrics over multiple runs.
+num_iterations: 1
+
+# Save animated GIFs showing particle filter evolution over time
+save_gif: true
+
+# Save visualization PNGs (heatmaps, particle distributions, trajectories)
+save_vis: true
+
+# ==========================
+# Data source
+# ==========================
+# Odometry tracking data source. Options: "ARKit" or "RoNIN"
+# ARKit: Uses ARKit tracking data (typically more accurate)
+# RoNIN: Uses RoNIN IMU-based tracking (for devices without ARKit)
+tracking_data_source: "ARKit"
+
+# ==========================
+# Particle filter settings
+# ==========================
+pf_config:
+  # Use global initialization (True) or local initialization (False)
+  # Global init uses heatmaps to initialize particles across the entire map
+  pf_global_init: true
+  
+  # Initialization method:
+  #   "palms": Use PALMS heatmaps for initialization (recommended)
+  #   "uniform": Uniform random initialization
+  #   "uni_ori": Uniform with orientation constraints
+  init_method: "palms"
+  
+  # Particle selection method for initialization:
+  #   "top": Select particles from top-k locations in heatmap
+  #   "random": Random sampling weighted by heatmap values
+  pf_init_method: "top"
+  
+  # Number of particles in the filter. More particles = better accuracy but slower.
+  # Typical range: 500 - 2000
+  particle_num: 500
+  
+  # Magnetometer noise standard deviation (radians)
+  # Controls uncertainty in heading measurements from magnetometer
+  mag_sigma: 0.356  # 0.712 * 0.5
+  
+  # Orientation noise standard deviation (radians)
+  # Controls uncertainty in orientation estimates
+  angle_sigma: 0.05
+  
+  # Drift noise standard deviation (meters)
+  # Controls uncertainty in position drift over time
+  drift_sigma: 0.015
+  
+  # Resampling radius in meters
+  # Particles within this radius are considered for resampling
+  resample_radius: 0.1
+  
+  # Step length noise standard deviation (meters, optional)
+  # If null, uses default based on velocity measurements
+  step_length_sigma: null
+
+# ==========================
+# CES (Certainly Empty Space) settings
+# ==========================
+CES_config:
+  # Gaussian kernel configuration for CES heatmap generation
+  # Format: [kernel_size, sigma]
+  #   kernel_size: Size of the Gaussian kernel (must be odd, e.g., 7, 15)
+  #   sigma: Standard deviation of the Gaussian (controls smoothing)
+  # Larger values = smoother but less precise heatmaps
+  gaussian_kernel_config: [7, 3]
+
+# ==========================
+# Data directories
+# ==========================
+# Directory containing tracking data and observations
+# Structure: {data_dir}/{scene_name}/{obs_name}/Session_*/detectedPlanes.json
+data_dir: "./tracking_data/06.04"
+
+# Root directory for saving experiment results
+result_root_dir: "./results/refactoring_test"
+
+# Directory containing floor plan CSV files
+# Floor plans should be named as {scene_name}.csv
+fp_dir: "./maps"

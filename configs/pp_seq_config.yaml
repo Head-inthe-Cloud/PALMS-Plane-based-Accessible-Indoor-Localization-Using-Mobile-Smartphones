@@ -1,0 +1,121 @@
+# ==========================
+# General experiment settings
+# ==========================
+# Map resolution in meters per pixel (typical: 0.05 - 0.2)
+resolution: 0.1
+
+# Number of iterations for statistical evaluation
+num_iterations: 1
+
+# Task type: "full", "partial", or "single"
+task: "full"
+
+# Algorithm method: "PALMS+", "PALMS", or "F3Loc"
+method: "PALMS+"
+
+# Save animated GIFs showing particle filter evolution
+save_gif: True
+
+# Save visualization PNGs (heatmaps, particle distributions, trajectories)
+save_vis: True
+
+# ==========================
+# Data settings
+# ==========================
+# Dataset type: "custom", "pano_sample", or "s3d"
+dataset: "custom"
+
+# Dataset directory paths
+custom_data_dir: "../Dataset/PALMS+_public/main_dataset"
+pano_sample_data_dir: "../Dataset/PALMS+_public/pano_samples"
+s3d_data_dir: "../Dataset/Structured3D"
+results_dir: "./results/refactoring_test/pp_seq"
+
+# Odometry tracking source: "ARKit" or "RoNIN"
+tracking_data_source: "ARKit"
+
+# Directory containing odometry tracking trajectories
+tracking_data_dir: "../Dataset/PALMS+_public/trajectories"
+
+# ==========================
+# Particle filter configuration
+# ==========================
+# Minimum trace length (number of steps) to include in evaluation
+# Shorter traces are skipped
+min_trace_length: 100
+
+pf_config:
+  # Use global initialization with heatmaps (True) or local initialization (False)
+  pf_global_init: true
+  
+  # Initialization method - MUST be "palms" to use PALMS+ heatmaps
+  # Options: "palms", "uniform", "uni_ori"
+  init_method: "palms"
+  
+  # Particle selection method: "random" or "percentile"
+  # "random": Random sampling weighted by heatmap
+  # "percentile": Select from top percentile of heatmap
+  pf_init_method: "random"
+  
+  # Number of particles (typical: 1000 - 2000 for sequential tracking)
+  particle_num: 2000
+  
+  # Magnetometer noise standard deviation (radians)
+  mag_sigma: 0.356  # 0.712 * 0.5
+  
+  # Orientation noise standard deviation (radians)
+  angle_sigma: 0.05
+  
+  # Drift noise standard deviation (meters)
+  drift_sigma: 0.015
+  
+  # Resampling radius in meters
+  resample_radius: 0.1
+  
+  # Step length noise (meters, null = use default)
+  step_length_sigma: null
+
+# ==========================
+# PALMS+ observation module configuration
+# ==========================
+# Monocular depth estimation model: "dp" (Depth Pro)
+mde: "dp"
+
+# Point cloud scale alignment mode: "ground_overlap", "ground", "all", or "None"
+scale_alignment_mode: "ground_overlap"
+
+# Mask depth values based on semantic classes
+mask_depth: True
+
+# Remove outlier points from point cloud
+remove_flying_particles: False
+
+# ==========================
+# PALMS+ layout matching configuration
+# ==========================
+# Scale range for robust matching (sweep over scales)
+# Format: np.arange(start, stop, step) - stop is EXCLUSIVE
+scale_range:
+  start: 0.9
+  stop: 1.1
+  step: 0.1
+
+# Weighting factor for heatmap generation (typical: 5 - 20)
+alpha: 10
+
+# Gaussian kernel: [kernel_size, sigma]
+# kernel_size: Must be odd (e.g., 7, 15, 21)
+# sigma: Standard deviation (typical: 2 - 5)
+gaussian_kernel_config: [15, 3]
+
+# Orientation slicing:
+#   0: Use 4 principal orientations (faster)
+#   4: Use top-4 relative orientations (balanced)
+#   36: Use 36 orientations (10° increments, more robust but slower)
+orn_slice: 4
+
+# ==========================
+# Metrics configuration
+# ==========================
+# Tolerance window in meters for success metrics
+tolerance: 1

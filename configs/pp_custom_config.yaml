@@ -1,0 +1,88 @@
+# ==========================
+# Experiment configuration
+# ==========================
+# Algorithm method: "PALMS" (LiDAR-based) or "PALMS+" (depth estimation + 3D reconstruction)
+method: "PALMS+"
+
+# Dataset type:
+#   "custom": Custom dataset with Session folders
+#   "pano_sample": Panorama-based sampled observations
+#   "s3d": Structured3D dataset
+dataset: "pano_sample"
+
+# Directory paths for datasets
+custom_data_dir: "../Dataset/PALMS+_public/main_dataset"
+pano_sample_data_dir: "../Dataset/PALMS+_public/pano_samples"
+results_dir: "./results/refactoring_test/pp"
+
+# ==========================
+# General configuration
+# ==========================
+# Map resolution in meters per pixel (typical: 0.05 - 0.2)
+resolution: 0.1
+
+# Device for computation: "cpu", "cuda", or "mps" (for Apple Silicon)
+device: "cpu"
+
+# Task type:
+#   "full": Full observation sequence
+#   "partial": Partial observation
+#   "single": Single frame observation
+task: "full"
+
+# ==========================
+# PALMS+ specific configuration
+# ==========================
+# Monocular depth estimation model: "dp" (Depth Pro) or custom model name
+mde: "dp"
+
+# Point cloud scale alignment mode:
+#   "ground_overlap": Use ground plane overlap (recommended)
+#   "ground": Use ground plane only
+#   "all": Try all alignment methods
+#   "None": No scale alignment
+scale_alignment_mode: "ground_overlap"
+
+# Mask depth values based on semantic classes (glass, person, etc.)
+mask_depth: True
+
+# Remove outlier points (flying particles) from point cloud
+remove_flying_particles: False
+
+# Scale range for robust matching (sweep over multiple scales)
+# Format: np.arange(start, stop, step) - stop is EXCLUSIVE
+# Typical range: 0.8 - 1.2 with step 0.05 - 0.1
+scale_range:
+  start: 0.9
+  stop: 1.1
+  step: 0.1
+
+# ==========================
+# Layout matching configuration
+# ==========================
+# Weighting factor for heatmap generation (higher = more emphasis on strong matches)
+# Typical range: 5 - 20
+alpha: 10
+
+# Gaussian kernel configuration for CES heatmap: [kernel_size, sigma]
+# kernel_size: Must be odd (e.g., 7, 15, 21)
+# sigma: Standard deviation for smoothing (typical: 2 - 5)
+gaussian_kernel_config: [15, 3]
+
+# ==========================
+# Orientation matching configuration
+# ==========================
+# Maximum distance for matching (meters) - used for F3Loc compatibility
+max_dist: 10
+
+# Orientation slicing:
+#   0: Use 4 principal orientations (PALMS method)
+#   >0: Use top-k relative orientations (more robust, slower)
+#   Typical values: 4, 8, 10, 36 (36 = 10° increments)
+orn_slice: 10
+
+# ==========================
+# Metrics configuration
+# ==========================
+# Tolerance window in meters for success metrics (ranking/confidence around ground truth)
+tolerance: 1

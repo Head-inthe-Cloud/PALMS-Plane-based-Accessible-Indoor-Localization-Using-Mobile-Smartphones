@@ -1,0 +1,81 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Results and temporary files
+results/
+temp/
+*.ply
+*.pcd
+
+# Model checkpoints (large files - consider hosting separately)
+checkpoints/
+*.pt
+*.pth
+*.ckpt
+
+# Data files
+*.csv
+*.json
+!configs/**/*.json
+*.npy
+*.png
+!images/**/*.png
+*.jpg
+*.jpeg
+
+# Example data (excluded from repository)
+example/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# Logs
+*.log
+logs/
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Depth Pro model (if included as submodule or needs separate setup)
+ml-depth-pro/
+observation_module/ml-depth-pro/
+
+# Experiment outputs
+evaluations/
+exp*/
+gifs/
