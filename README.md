@@ -29,8 +29,8 @@ This repository contains implementations for **PALMS** and **PALMS+**, two syste
 <!-- ![PALMS+ Architecture](./images/PALMS+_Architecture.png) -->
 
 ## News
-- **2025-11-12:** **PALMS+ accepted to WACV 2026 (Application Track)!**
-- **2024-10-17:** Our presentation of the PALMS paper has received the [Best Presentation award](https://ipin-conference.org/2024/awardees/) at IPIN 2024!
+- **2025-11-12:** **PALMS+** accepted to WACV 2026 (Application Track)!
+- **2024-10-17:** Our presentation of the **PALMS** paper has received the [Best Presentation award](https://ipin-conference.org/2024/awardees/) at IPIN 2024!
 - **2024-07-29:** **PALMS** paper accepted to IPIN 2024!
 
 
@@ -251,6 +251,78 @@ See the following for example visualizations:
 
 
 ## Dataset
+
+The dataset is organized into several main components, each serving different purposes in the PALMS and PALMS+ localization pipeline:
+
+### Dataset Structure
+
+```
+datasets/
+├── main_dataset/        # Full recording sessions
+├── pano_samples/        # Data sampled from panoramas
+├── maps/                # Floor plan geometry files
+├── trajectories/        # IMU-based or ARKit-VIO odometry tracking data 
+└── structured3d/        # Contains an example of the Structured3D synthetic indoor scenes
+```
+
+### 1. main_dataset/
+
+Contains complete recording sessions organized by building/location:
+- **BE** (Baskin Engineering): 19 sessions
+- **E2** (Engineering 2): 24 sessions
+- **PS** (Physical Sciences): 19 sessions
+- **SVC** (Student Volunteer Center): 19 sessions
+
+Each session directory contains:
+- `images/`: RGB images (`.png`) with LabelMe JSON annotations (semantic labels)
+- `poses/`: Camera pose files (4×4 transformation matrices) for each frame
+- `intrinsics/`: Camera intrinsic matrices (3×3) for each frame
+- `depths/`: Depth data collected using ARKit LiDAR in JSON format
+- `dp_depths/`: Pre-computed Depth Pro depth maps (`.npy` files)
+- `confidences/`: Confidence maps for depth estimation (`.png`)
+- `detectedPlanes.json`: Detected plane information with timestamps and alignment data
+- `pano.png`: Panoramic image of the scene
+- `label.txt`: Ground truth position (x, y, z coordinates)
+- `metadata.json`: Session metadata
+- `timeStamps.json`: Timestamps for each frame
+
+### 2. pano_samples/
+
+Subset of sessions with panorama-specific data for quick testing and evaluation. Contains the same building structure (BE, E2, PS, SVC) with:
+- 5 sample images per session with corresponding depth maps
+- Camera poses and intrinsics
+- Panorama metadata (FOV, interval, starting angle)
+- Ground truth positions
+
+### 3. maps/
+
+CSV files containing floor plan geometry for each building:
+- `BE.csv`, `E2.csv`, `PS.csv`, `SVC.csv`: Building floor plans
+- Format: Each line contains 4 coordinates (x1, y1, x2, y2) representing wall segments/edges
+- Used for layout matching and CES (Certainly Empty Space) constraint generation
+
+### 4. trajectories/
+
+IMU-based trajectory data organized by building and trajectory ID:
+- Contains RoNIN raw 2D trajectory data (x, y coordinates over time) in JSON format
+- `tracking_obs_pairs.csv`: Mapping between tracking data and observation sessions
+  - Columns: `tracking_data_path`, `obs_data_path`, `starting_idx`, `theta` (rotation angle)
+  - For details, see `utils/prep_trajectories.py`
+- Used for sequential localization with particle filter tracking
+
+### 5. structured3d/
+
+**Note:** The `structured3d/` folder in this repository is empty. Due to Structured3D's terms of use, we cannot redistribute their data. Users must download the Structured3D dataset directly from the official website.
+
+**Download Instructions:**
+
+1. Visit the [Structured3D dataset website](https://structured3d-dataset.org/)
+2. Complete the agreement form to accept the Structured3D Terms of Use
+3. Download the dataset and extract it to the `../datasets/structured3d/` directory
+4. The dataset should be organized as: `structured3d/scene_XXXXX/2D_rendering/...`
+
+### Dataset Availability
+
 We are currently preparing the code and dataset for public release. Releasing the dataset requires extra care as some images contain human subjects. While we have blurred all humans in the images, we are taking extra precautions to ensure our data release is legitimate and complies with all necessary privacy and ethical guidelines. The dataset will be made available once these considerations are fully addressed. Stay tuned!
 
 
@@ -290,6 +362,50 @@ Research reported in this publication was supported by the National Eye Institut
 **PALMS+**  
 This research was funded in part by the National Eye Institute (NIH) under grant number R01EY036360. The authors would like to thank Loni Halsted-Ruelas for her invaluable assistance with dataset curation and experimental support.
 
+**Structured3D Dataset**  
+We acknowledge the use of the [Structured3D dataset](https://structured3d-dataset.org/) for evaluation purposes. The dataset is provided by Jia Zheng, Junfei Zhang, Jing Li, Rui Tang, Shenghua Gao, and Zihan Zhou. The dataset is released under the [Structured3D Terms of Use](https://structured3d-dataset.org/), permitting use for non-commercial research and educational purposes only. For more information and to download the dataset, please visit their [GitHub repository](https://github.com/bertjiazheng/Structured3D).
+
+If you use the Structured3D dataset in your research, please cite:
+
+```bibtex
+@inproceedings{Structured3D,
+  title     = {Structured3D: A Large Photo-realistic Dataset for Structured 3D Modeling},
+  author    = {Jia Zheng and Junfei Zhang and Jing Li and Rui Tang and Shenghua Gao and Zihan Zhou},
+  booktitle = {Proceedings of The European Conference on Computer Vision (ECCV)},
+  year      = {2020}
+}
+```
+
+**F³Loc**  
+We acknowledge the F³Loc paper for comparison and benchmarking purposes. F³Loc: Fusion and Filtering for Floorplan Localization by Changan Chen, Rui Wang, Christoph Vogel, and Marc Pollefeys was presented at CVPR 2024. For more information, please refer to the [paper](https://www.microsoft.com/en-us/research/publication/f3loc-fusion-and-filtering-for-floorplan-localization/) and [arXiv preprint](https://arxiv.org/abs/2403.03370).
+
+If you reference F³Loc in your research, please cite:
+
+```bibtex
+@inproceedings{chen2024f3loc,
+  title={F $\^{3}$ Loc: Fusion and Filtering for Floorplan Localization},
+  author={Chen, Changan and Wang, Rui and Vogel, Christoph and Pollefeys, Marc},
+  booktitle={IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  year={2024}
+}
+```
+
+**Depth Pro**  
+PALMS+ utilizes the [Depth Pro](https://github.com/apple/ml-depth-pro) model for monocular depth estimation. Depth Pro is a foundation model for zero-shot metric monocular depth estimation, capable of synthesizing high-resolution depth maps with sharpness and high-frequency details. The model produces metric predictions with absolute scale without relying on camera intrinsics metadata. For more information, please refer to the [arXiv preprint](https://arxiv.org/abs/2410.02073) and [GitHub repository](https://github.com/apple/ml-depth-pro).
+
+If you use Depth Pro in your research, please cite:
+
+```bibtex
+@inproceedings{Bochkovskii2024:arxiv,
+  author     = {Aleksei Bochkovskii and Ama\"{e}l Delaunoy and Hugo Germain and Marcel Santos and
+               Yichao Zhou and Stephan R. Richter and Vladlen Koltun},
+  title      = {Depth Pro: Sharp Monocular Metric Depth in Less Than a Second},
+  booktitle  = {International Conference on Learning Representations},
+  year       = {2025},
+  url        = {https://arxiv.org/abs/2410.02073},
+}
+```
+
 
 <!-- ## LICENSE -->
 
@@ -299,7 +415,7 @@ This research was funded in part by the National Eye Institute (NIH) under grant
 
 ## Citation
 
-If you find this project useful, please consider citing:
+If you find this project useful, please cite the following papers:
 
 ### PALMS (IPIN 2024)
 
