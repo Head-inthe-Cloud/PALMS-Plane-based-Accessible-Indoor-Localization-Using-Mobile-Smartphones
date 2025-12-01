@@ -1,7 +1,7 @@
 <div align="center">
 <h1>PALMS & PALMS+: Plane-based Accessible Indoor Localization Using Mobile Smartphones</h1>
 
-[**Yunqian Cheng**](http://yunqiancheng.cloud/) · [**Benjamin Princen**](https://github.com/Head-inthe-Cloud) · [**Roberto Manduchi**](https://users.soe.ucsc.edu/~manduchi/)
+[**Yunqian Cheng**](http://yunqiancheng.cloud/) · [**Benjamin Princen**](https://www.linkedin.com/in/benjamin-princen/) · [**Roberto Manduchi**](https://users.soe.ucsc.edu/~manduchi/)
 
 University of California, Santa Cruz
 <br>
