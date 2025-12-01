@@ -31,52 +31,11 @@ from tqdm import tqdm
 from glob import glob
 import yaml
 
-from utils.file_io import load_vector_map_csv, load_tracking_data_json, load_planes_json
+from utils.file_io import load_vector_map_csv, load_tracking_data_json, load_planes_json, load_yaml_config, create_exp_dir
 from utils.geometry_utils import find_principal_orientations
 from utils.visualization import *
 from palms_src.simulator import PF_Simulator
 from layout_matching_module.CES import ConvCES
-
-def load_yaml_config(path: Path) -> Dict[str, Any]:
-    """Load and validate a YAML configuration file.
-    
-    Args:
-        path: Path to the YAML configuration file.
-        
-    Returns:
-        Dictionary containing the configuration parameters.
-        
-    Raises:
-        ValueError: If the YAML file does not contain a top-level dictionary.
-    """
-    with path.open('r') as f:
-        cfg = yaml.safe_load(f)
-    if not isinstance(cfg, dict):
-        raise ValueError('Top-level YAML must be a mapping/dict.')
-    return cfg
-
-
-def create_exp_dir(result_root_dir: Path) -> Path:
-    """Create a new experiment directory with an auto-incrementing number.
-    
-    Creates a directory named 'exp0', 'exp1', etc., incrementing until finding
-    a non-existent directory name. This prevents overwriting previous experiments.
-    
-    Args:
-        result_root_dir: Base directory where experiment directories are created.
-        
-    Returns:
-        Path to the newly created experiment directory.
-    """
-    result_root_dir.mkdir(parents=True, exist_ok=True)
-    exp_num = 0
-    exp_dir = result_root_dir / f'exp{exp_num}'
-    while exp_dir.exists():
-        exp_num += 1
-        exp_dir = result_root_dir / f'exp{exp_num}'
-    exp_dir.mkdir()
-    return exp_dir
-
 
 def parse_args() -> argparse.Namespace:
     """Parse command-line arguments for the PALMS test script.
@@ -136,7 +95,7 @@ def main():
         'pf_config': {
             'pf_global_init': cfg.get('pf_config', {}).get('pf_global_init', True),
             'init_method': cfg.get('pf_config', {}).get('init_method', True),
-            'pf_init_method': cfg.get('pf_config', {}).get('pf_init_method', 'top'),  # ['top', 'random']
+            'pf_init_method': cfg.get('pf_config', {}).get('pf_init_method', 'percentile'),  # ['percentile', 'random']
             'big_bin': cfg.get('pf_config', {}).get('big_bin', True),
             'particle_num': cfg.get('pf_config', {}).get('particle_num', 1000),
             'mag_sigma': cfg.get('pf_config', {}).get('mag_sigma', 0.712 * 0.5),
@@ -167,11 +126,16 @@ def main():
     shutil.copy(args.config, exp_dir / args.config.name)
 
     total_observations = 0
-    total_metrics = {'avg_converge_time': [],
-                    'avg_converge_distance': [],
-                    'avg_RMSE': [],
-                    'avg_success': []
-    }              
+    total_metrics = {
+        'avg_trace_length': [],
+        'avg_converge_time': [],
+        'avg_converge_distance': [],
+        'avg_RMSE': [],
+        'avg_RMSE_last_10': [],
+        'avg_end_distance': [],
+        'avg_success_1m': [],
+        'avg_conv_success': []
+    }     
 
     scene_names = sorted([p.name for p in data_dir.iterdir() if p.is_dir()])
     for scene_name in tqdm(scene_names, desc='Running simulations on different scenes...'):
@@ -179,7 +143,7 @@ def main():
         fp_path = fp_dir / f'{scene_name}.csv'
         vector_map = load_vector_map_csv(fp_path)
         
-        obs_dirs = list((data_dir / scene_name ).glob('*'))
+        obs_dirs = [p for p in (data_dir / scene_name).glob('*') if p.name != '.DS_Store']
         total_observations += len(obs_dirs)
         for obs_dir in tqdm(obs_dirs, desc=f'Running simulations on observations in scene {scene_name}...'):
             obs_name =  os.path.basename(obs_dir)
@@ -335,7 +299,7 @@ def main():
     avg_metrics = {}
     for metric_name in total_metrics:
         avg_metrics[metric_name] = np.mean(total_metrics[metric_name])
-    print(f'Simulation complete, final metrics over {len(scene_names)} Scenes, {total_observations} Observations, each with {config['num_iterations']} iterations:')
+    print(f"Simulation complete, final metrics over {len(scene_names)} Scenes, {total_observations} Observations, each with {config['num_iterations']} iterations:")
     print(avg_metrics)
 
 if __name__ == '__main__':

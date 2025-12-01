@@ -4,7 +4,7 @@ BUILDINGS = ['BE', 'PS', 'SVC', 'E2']
 
 # Default floor plan paths (relative to project root)
 # These can be overridden in config files or via environment variables
-_DEFAULT_MAPS_DIR = os.getenv('PALMS_MAPS_DIR', './maps')
+_DEFAULT_MAPS_DIR = '../datasets/maps'
 FP_PATHS = {
     'BE': os.path.join(_DEFAULT_MAPS_DIR, 'BE.csv'),
     'PS': os.path.join(_DEFAULT_MAPS_DIR, 'PS.csv'),

@@ -38,13 +38,13 @@ pf_config:
   init_method: "palms"
   
   # Particle selection method for initialization:
-  #   "top": Select particles from top-k locations in heatmap
+  #   "percentile": Select particles from top-k locations in heatmap
   #   "random": Random sampling weighted by heatmap values
-  pf_init_method: "top"
+  pf_init_method: "percentile"
   
   # Number of particles in the filter. More particles = better accuracy but slower.
   # Typical range: 500 - 2000
-  particle_num: 500
+  particle_num: 2000
   
   # Magnetometer noise standard deviation (radians)
   # Controls uncertainty in heading measurements from magnetometer
@@ -82,11 +82,11 @@ CES_config:
 # ==========================
 # Directory containing tracking data and observations
 # Structure: {data_dir}/{scene_name}/{obs_name}/Session_*/detectedPlanes.json
-data_dir: "./tracking_data/06.04"
+data_dir: "../datasets/trajectories"
 
 # Root directory for saving experiment results
-result_root_dir: "./results/refactoring_test"
+result_root_dir: "./results/palms"
 
 # Directory containing floor plan CSV files
 # Floor plans should be named as {scene_name}.csv
-fp_dir: "./maps"
+fp_dir: "../datasets/maps"

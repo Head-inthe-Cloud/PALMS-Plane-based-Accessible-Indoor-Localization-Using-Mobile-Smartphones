@@ -11,9 +11,9 @@ method: "PALMS+"
 dataset: "pano_sample"
 
 # Directory paths for datasets
-custom_data_dir: "../Dataset/PALMS+_public/main_dataset"
-pano_sample_data_dir: "../Dataset/PALMS+_public/pano_samples"
-results_dir: "./results/refactoring_test/pp"
+custom_data_dir: "../datasets/main_dataset"
+pano_sample_data_dir: "../datasets/pano_samples"
+results_dir: "./results/pp"
 
 # ==========================
 # General configuration

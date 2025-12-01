@@ -351,6 +351,11 @@ def parse_args() -> argparse.Namespace:
         help='Path to YAML config (merged settings for PALMS+ heatmaps + PF).',
     )
     p.add_argument(
+        '--run_example',
+        action='store_true',
+        help='Run using the example data'
+    )
+    p.add_argument(
         '--cache_data',
         action='store_true',
         help='Store and load heatmaps and obs_thetas in temporary cache files'
@@ -414,6 +419,11 @@ def main():
     mask_depth = cfg.get('mask_depth', True)
     scale_alignment_mode = cfg.get('scale_alignment_mode', 'all')
     remove_flying_particles = cfg['remove_flying_particles']
+
+    if args.run_example:
+        pano_sample_data_dir = "./example"
+        method = 'PALMS+'
+        dataset_name = 'pano_sample'
 
     # --- PF config (from PALMS) ---
     min_trace_length = cfg.get('min_trace_length', 100)
@@ -481,7 +491,12 @@ def main():
     }
 
     # --- Get Tracking-Obs Pairing data ---
-    paring_data = load_pairing_data_csv(os.path.join(tracking_data_dir, 'tracking_obs_pairs.csv'))
+    if args.run_example:
+        tracking_json = './example/BE/Baskin_New.Engineering.geojson.csv_Session_1717523676.json'
+        starting_idx = 36
+        tracking_theta = -0.7853981633974483
+    else:
+        paring_data = load_pairing_data_csv(os.path.join(tracking_data_dir, 'tracking_obs_pairs.csv'))
 
     # --- Iterate dataset ---
     for data in tqdm(dataset, desc=f'Running PF with {method} heatmaps on {dataset_name}'):
@@ -507,20 +522,20 @@ def main():
         map_mask = dataset.map_mask
 
         # 1) Load tracking data for PF
-        if dataset_name == 'pano_sample':
-            key = obs_path.replace('PALMS+_pano_samples', 'PALMS+')
-        else:
-            key = obs_path
-        
-        key = '/'.join(key.split('/')[-2:])
-        tracking_json, starting_idx, tracking_theta = paring_data.get(key, (None, None, None)) 
         if tracking_json is None:
-            continue
-        tracking_json = os.path.join(tracking_data_dir, tracking_json)
-        tracking_data = load_tracking_data_json(tracking_json)
+            key = '/'.join(key.split('/')[-2:])
+            tracking_json, starting_idx, tracking_theta = paring_data.get(key, (None, None, None)) 
+            if tracking_json is None:
+                continue
 
+            tracking_json = glob(os.path.join(tracking_data_dir, '**', tracking_json), recursive=True)
+            assert len(tracking_json) == 1, 'There should be only one tracking json file'
+            tracking_json = tracking_json[0]
+
+        tracking_data = load_tracking_data_json(tracking_json)
         # If the remaining path is too short, we skip it.
         if len(tracking_data['ARKit_raw_2D']) - starting_idx < min_trace_length:
+            print("Skipped")
             continue
 
         os.makedirs(run_save_dir, exist_ok=True)
@@ -612,6 +627,7 @@ def main():
                 return
             
         if args.cache_data:
+            os.makedirs(os.path.dirname(temp_heatmap_path), exist_ok=True)
             if not os.path.exists(temp_heatmap_path):
                 np.save(temp_heatmap_path, heatmaps)
             if not os.path.exists(temp_obs_thetas_path):
@@ -622,7 +638,7 @@ def main():
         pf_config_full = {
             'pf_global_init': pf_cfg.get('pf_global_init', True),
             'init_method'   : pf_cfg.get('init_method', 'palms'),    # ["palms","uniform","uni_ori"]
-            'pf_init_method': pf_cfg.get('pf_init_method', 'top'),   # ["random","top"]
+            'pf_init_method': pf_cfg.get('pf_init_method', 'percentile'),   # ["random","percentile"]
             'particle_num'  : pf_cfg.get('particle_num', 2000),
             'mag_sigma'     : pf_cfg.get('mag_sigma', 0.356),
             'angle_sigma'   : pf_cfg.get('angle_sigma', 0.05),
@@ -730,8 +746,6 @@ def aggregate_results():
     """
     method = 'PALMS+_masked'
     data_dir = f'./results/pp_seq/ARKit/{method}'
-    building_list = ['BE', 'E2', 'PS']
-    paring_data = load_pairing_data_csv('./tracking_data/tracking_obs_pairs.csv')
 
     metric_paths = glob(os.path.join(data_dir, '**/metrics.json'), recursive=True)
 

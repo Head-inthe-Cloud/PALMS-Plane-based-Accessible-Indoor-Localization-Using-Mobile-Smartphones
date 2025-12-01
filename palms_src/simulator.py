@@ -676,7 +676,6 @@ class PF_Simulator():
             metrics['conv_success'] = False
 
         # If the last 10 steps falls with 1m, consider success
-        print('distances', distances[-10:])
         if np.all(distances[-10:] <= 1):
             metrics['success_1m'] = True
         

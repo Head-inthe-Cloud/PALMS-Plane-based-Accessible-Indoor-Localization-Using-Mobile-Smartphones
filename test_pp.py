@@ -63,6 +63,11 @@ def parse_args() -> argparse.Namespace:
         help='Path to YAML config file.',
     )
     p.add_argument(
+        '--run_example',
+        action='store_true',
+        help='Run using the example data'
+    )
+    p.add_argument(
         '--visualize_obs',
         action='store_true',
         help='Visualize the observation on the map'
@@ -134,6 +139,7 @@ def main():
     args = parse_args()
     cfg = load_config(args.config)
 
+    run_example = args.run_example
     visualize_obs = args.visualize_obs
     visualize_pcd = args.visualize_pcd
     visualize_heatmap = args.visualize_heatmap
@@ -157,6 +163,11 @@ def main():
     max_dist = cfg['max_dist']
     orn_slice = cfg['orn_slice']
     tolerance = cfg['tolerance']
+
+    if run_example:
+        pano_sample_data_dir = "./example"
+        method = 'PALMS+'
+        dataset_name = 'pano_sample'
 
     metrics_path = os.path.join(results_dir, 'PALMS+', 'evaluations', dataset_name, f'{method}_metrics_{orn_slice}_{task}_{scale_alignment_mode}.json')
     temp_metrics_path = metrics_path.replace('.json', '_temp.csv')
@@ -222,7 +233,7 @@ def main():
             if visualize_obs:
                 obs_planes_vis = rotate_segments(obs_planes, theta=label[2])
                 obs_planes_vis += label[:2]
-                visualize(segments_1=vector_map, segments_2=obs_planes_vis, title='Floor plan and the observation before localization')
+                visualize(segments_1=vector_map, segments_2=obs_planes_vis, title='Floor plan and the observation at the labeled position and orientation')
 
             if orn_slice == 0:
                 obs_oris = find_principal_orientations(obs_planes)
