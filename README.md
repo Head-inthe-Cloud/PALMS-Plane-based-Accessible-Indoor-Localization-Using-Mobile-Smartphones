@@ -64,17 +64,8 @@ This repository contains implementations for **PALMS** and **PALMS+**, two syste
 
 ### Prerequisites
 
-- Python 3.10.12
+- Python 3.10
 - CUDA-capable GPU (recommended for depth estimation, but CPU is supported)
-
-**Tested Environment:**
-- Python packages are listed in `requirements.txt` with specific versions
-- Key dependencies tested:
-  - PyTorch 2.5.1 with torchvision 0.20.1
-  - NumPy 1.26.4, SciPy 1.15.1
-  - OpenCV 4.11.0.86, Open3D 0.19.0
-  - PyTorch Lightning 2.5.1
-  - See `requirements.txt` for complete list of dependencies
 
 ### Step 1: Clone the Repository
 
