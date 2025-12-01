@@ -57,7 +57,6 @@ This repository contains implementations for **PALMS** and **PALMS+**, two syste
 - Demonstrated robustness across **Structured3D** and custom campus datasets
 - Outperforms PALMS and F³Loc in stationary localization accuracy
 
-<!-- TODO: Add PALMS+ results visualization -->
 ![PALMS+ Examples](./images/palms+_examples.png)
 
 ## Installation
@@ -91,21 +90,25 @@ The `requirements.txt` file contains all necessary packages with tested versions
 
 ### Step 3: Set Up Depth Pro Model (for PALMS+)
 
-The PALMS+ method requires the Depth Pro monocular depth estimation model. You need to:
+Most of our data already come with pre-computed Depth Pro depth maps, if you want to re-estimate the depth maps, you will need the Depth Pro model:
 
-1. Clone the Depth Pro repository into `ml-depth-pro/`:
+1. Clone the Depth Pro repository into `ml-depth-pro/` and install the Depth Pro module:
    ```bash
    git clone https://github.com/apple/ml-depth-pro.git
+   cd ml-depth-pro
+   pip install -e .
    ```
 
-2. Follow the instructions in the Depth Pro repository to download the Depth Pro checkpoint and place it in the `checkpoints/` directory:
+2. Download the Depth Pro checkpoint by running the following command, then move the `checkpoints/` directory under the main directory:
    ```bash
-   # Download depth_pro.pt from the Depth Pro repository
-   # Place it in: checkpoints/depth_pro.pt
+   # Download depth_pro.pt using scripts from the Depth Pro repository
+   source get_pretrained_models.sh
+
+   # Move the directory
+   mv ./checkpoints ../checkpoints
    ```
 
 Alternatively, you can use other monocular depth estimation models.
-
 
 ## Usage
 
@@ -116,7 +119,7 @@ PALMS provides three main scripts for different use cases:
 Runs the original PALMS algorithm using LiDAR/ARKit plane detections with particle filter tracking.
 
 ```bash
-python test_palms.py --config configs/palms_config.yaml [--visualize_palms]
+python test_palms.py --config configs/palms_config.yaml --visualize_palms --run_example
 ```
 
 **Configuration file**: `configs/palms_config.yaml`
@@ -126,7 +129,7 @@ python test_palms.py --config configs/palms_config.yaml [--visualize_palms]
 Runs PALMS+ using depth estimation and 3D point cloud reconstruction for single-shot localization.
 
 ```bash
-python test_pp.py --config configs/pp_custom_config.yaml [--visualize_obs] [--visualize_pcd] [--visualize_heatmap]
+python test_pp.py --config configs/pp_custom_config.yaml --visualize_obs --visualize_pcd --visualize_heatmap --run_example
 ```
 
 **Configuration file**: `configs/pp_custom_config.yaml` or `configs/pp_s3d_config.yaml`
@@ -136,10 +139,14 @@ python test_pp.py --config configs/pp_custom_config.yaml [--visualize_obs] [--vi
 Runs PALMS+ with sequential particle filter tracking for sequential localization.
 
 ```bash
-python test_pp_seq.py --config configs/pp_seq_config.yaml [--visualize_obs] [--visualize_pcd] [--visualize_heatmap] [--cache_data]
+python test_pp_seq.py --config configs/pp_seq_config.yaml --visualize_obs --visualize_pcd --visualize_heatmap --visualize_palms --cache_data --run_example
 ```
 
 **Configuration file**: `configs/pp_seq_config.yaml`
+
+
+## Visualizations
+Using the `--visualize_palms` flag, GIFs will be saved to the `results` folder, along with other visualizations. You may also use the `visualize()` function to visualize the results.
 
 
 ## Configuration Files
@@ -219,32 +226,33 @@ For `test_pp_seq.py`, you need odometry tracking data:
 - Pairing file (`tracking_obs_pairs.csv`) mapping observations to tracking sequences
 
 ### Example Data
+The repository includes example data in `example/` that you can use to test the installation. Use the `--run_example` flag to try it out!
 
-The repository includes example data in `example/Session_1744229291/` that you can use to test the installation.
+See the following for example visualizations:
+
+<table>
+  <tr>
+    <td align="center">
+      <b>Ground Truth</b><br>
+      <img src="./images/gt.png" width="300"/>
+    </td>
+    <td align="center">
+      <b>Heatmap</b><br>
+      <img src="./images/heatmap.png" width="300"/>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">
+      <b>Animation</b><br>
+      <img src="./images/BE_Session_1744230174.gif" width="300"/>
+    </td>
+  </tr>
+</table>
+
 
 ## Dataset
-We are currently preparing the code and dataset for public release. It will be made available soon. Stay tuned!
+We are currently preparing the code and dataset for public release. Releasing the dataset requires extra care as some images contain human subjects. While we have blurred all humans in the images, we are taking extra precautions to ensure our data release is legitimate and complies with all necessary privacy and ethical guidelines. The dataset will be made available once these considerations are fully addressed. Stay tuned!
 
-## Quick Start Example
-
-Here's a minimal example to get started with PALMS+:
-
-1. **Prepare your data**: Organize images, intrinsics, poses, and floor plan as described above.
-
-2. **Create a config file**: Copy `configs/pp_custom_config.yaml` and modify paths:
-   ```yaml
-   method: "PALMS+"
-   dataset: "custom"
-   custom_data_dir: "./your_data"
-   results_dir: "./results"
-   ```
-
-3. **Run localization**:
-   ```bash
-   python test_pp.py --config your_config.yaml --visualize_heatmap
-   ```
-
-4. **Check results**: Results will be saved in `results/` with metrics and visualizations.
 
 ## Project Structure
 
@@ -264,6 +272,8 @@ PALMS-Plane-based-Accessible-Indoor-Localization-Using-Mobile-Smartphones/
 ```
 
 ## Troubleshooting
+
+If you encounter any bugs in the code, we welcome you to report them by creating an issue in the [GitHub repository](https://github.com/Head-inthe-Cloud/PALMS-Plane-based-Accessible-Indoor-Localization-Using-Mobile-Smartphones/issues). Please include details about the error, your environment, and steps to reproduce the issue.
 
 ## Contact
 
