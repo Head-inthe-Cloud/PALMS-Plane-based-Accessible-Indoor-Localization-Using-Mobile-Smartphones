@@ -5,13 +5,13 @@
 
 University of California, Santa Cruz
 <br>
-
 <a href="https://escholarship.org/uc/item/7bw6797s"><img src='https://img.shields.io/badge/Paper-PALMS-red' alt='PALMS Paper PDF'></a>
 <a href="https://arxiv.org/abs/2511.09724"><img src='https://img.shields.io/badge/Paper-PALMS+-blue' alt='PALMS+ Paper PDF'></a>
 <a href='https://github.com/Head-inthe-Cloud/PALMS-Plane-based-Accessible-Indoor-Localization-Using-Mobile-Smartphones'><img src='https://img.shields.io/badge/Project_Page-GitHub-green' alt='Project Page'></a>
 <!-- <a href='https://head-inthe-cloud.github.io/PALMS-Plane-based-Accessible-Indoor-Localization-Using-Mobile-Smartphones/'><img src='https://img.shields.io/badge/🌐-Project_Website-purple' alt='Project Website'></a> -->
 <!-- <a href=''><img src='https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Demo-blue'></a> -->
 <a href='https://huggingface.co/datasets/Head-inthe-Cloud/ucsc-palms-indoor-localization/tree/main'><img src='https://img.shields.io/badge/Dataset-PALMS-yellow' alt='Dataset'></a>
+<a href="https://www.youtube.com/watch?v=ovuICHkB2xg"><img src='https://img.shields.io/badge/Video-PALMS+-red' alt='PALMS+ Video'></a>
 </div>
 
 
