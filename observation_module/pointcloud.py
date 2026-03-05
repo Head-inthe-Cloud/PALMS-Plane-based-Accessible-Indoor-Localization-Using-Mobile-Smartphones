@@ -22,9 +22,10 @@ def remove_statistical_outliers(pcd, nb_neighbors=20, std_ratio=1.0):
     return filtered_pcd
 
 
-def project_pcd_to_xz(pcd, resolution=0.1, max_range=None):
+def project_arkit_pcd_to_xz(pcd, resolution=0.1, max_range=None):
     '''
     Projects a point cloud onto the XZ plane and generates a binary image.
+    The point cloud reference frame follow this convention: z backward, y down, x right
 
     Args:
     - pcd (o3d.geometry.PointCloud): Input point cloud.
@@ -53,6 +54,61 @@ def project_pcd_to_xz(pcd, resolution=0.1, max_range=None):
     # We follow the same convention defined in geometry_utils.Plane.to_2D(), (x', y') = (-z, -x)
     x_coords = -points[:, 2] # -z
     y_coords = points[:, 0] # x   the y coordinate should be -x, but since we are in image reference frame, we flip the y axis
+
+    # Get min/max bounds for X and Z
+    x_min, x_max = np.min(x_coords), np.max(x_coords)
+    y_max, y_min = -np.min(y_coords), -np.max(y_coords)
+
+    # Compute dynamic grid size based on resolution
+    grid_width = int(np.ceil((x_max - x_min) / resolution)) + 1  # W (columns)
+    grid_height = int(np.ceil((y_max - y_min) / resolution)) + 1  # H (rows)
+
+    # Create a blank binary image
+    binary_image = np.zeros((grid_height, grid_width), dtype=np.uint8)
+
+    # Convert (X, Z) to pixel indices
+    x_indices = ((x_coords - x_min) / resolution).astype(int)
+    z_indices = ((y_coords - y_min) / resolution).astype(int)
+    z_indices = np.max(z_indices) - z_indices
+
+    # Assign 1s where points exist
+    binary_image[z_indices, x_indices] = 1
+
+    return binary_image, x_min, y_min
+
+
+def project_pcd_to_xz(pcd, resolution=0.1, max_range=None):
+    '''
+    Projects a point cloud onto the XZ plane and generates a binary image.
+    The point cloud reference frame follow this convention: z foward, y down, x right
+
+    Args:
+    - pcd (o3d.geometry.PointCloud): Input point cloud.
+    - resolution (float): Grid cell size in meters.
+
+    Returns:
+    - binary_image (np.ndarray): Binary image (H x W) where 1 represents a point, 0 represents empty space.
+    '''
+    # Convert Open3D point cloud to NumPy array
+    points = np.asarray(pcd.points)
+
+    if max_range is not None:
+        # Compute distance in the XZ plane (ignoring Y)
+        xz_distance = np.sqrt(points[:, 0]**2 + points[:, 2]**2)
+
+        # Create a mask for points within the allowed range
+        mask = xz_distance <= max_range
+
+        # Filter points based on the mask
+        points = points[mask]
+
+    if len(points) == 0:
+        return None, None, None
+
+    # Extract X and Z coordinates (ignore Y)
+    # We follow the same convention defined in geometry_utils.Plane.to_2D(), (x', y') = (-z, -x)
+    x_coords = points[:, 2] # z
+    y_coords = -points[:, 0] # x   the y coordinate should be -x, but since we are in image reference frame, we flip the y axis
 
     # Get min/max bounds for X and Z
     x_min, x_max = np.min(x_coords), np.max(x_coords)
@@ -117,14 +173,13 @@ def get_projection_from_pcd(pcd, resolution=0.1, show_result=False):
         show_result: Whether to visualize intermediate results. Defaults to False.
 
     Returns:
-        tuple: (projection, segments, x_min, y_min) where:
+        tuple: (projection, segments) where:
             - projection: 2D binary projection image (None if projection fails).
             - segments: Extracted and scaled line segments (None if projection fails).
-            - x_min, y_min: Minimum coordinates for coordinate translation.
     """
     projection, x_min, y_min = project_pcd_to_xz(pcd)
     if projection is None:
-        return None, None, None
+        return None, None
 
     segments = projection_to_segments(projection, show_result=show_result)
 

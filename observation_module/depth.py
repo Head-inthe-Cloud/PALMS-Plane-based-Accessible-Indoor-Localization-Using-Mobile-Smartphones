@@ -1,77 +1,18 @@
+"""
+Depth utilities for working with existing depth maps.
+
+This module does NOT require Depth Pro. For depth estimation (MDE) and
+create_depth_map, use observation_module.depth_pro_estimator instead.
+"""
+
+import json
 import numpy as np
-import sys
-import os
 import cv2
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
-import matplotlib
-import json
 
 from pp_src.const import MASK_CLASSES
-from utils.camera_utils import create_intrinsic_matrix
-from utils.file_io import load_image, load_intrinsics
 
-os.environ['PYTORCH_ENABLE_MPS_FALLBACK'] = '1'
-import torch
-
-DEVICE = 'cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu'
-depth_pro_path = os.path.join(os.path.dirname(__file__), 'ml-depth-pro')
-sys.path.append(depth_pro_path)
-import depth_pro
-
-
-class MDE:
-    '''
-    A class for Monocular Depth Estimation. Useful if you want to estimate depths by large batches
-    '''
-    def __init__(self, model_name='dp', device='cuda' if torch.cuda.is_available() else 'cpu'):
-        assert model_name in ['dp'], 'We currently only support Depth Pro, you may replace this with other MDE models'
-        self.model_name = model_name
-        self.device = device
-        self.model = None
-        self.transform = None
-        print(f'[MDE] Initialized with model: {model_name} on device: {device}')
-
-    def estimate_depth(self, image=None, image_path=None, intrinsics=None, intrinsics_path=None):
-        '''
-        Parameters:
-            image_path (str): Path to the RGB image.
-            arkit_depth_path (str): Path to the ARKit depth map (required for PDA).
-            intrinsics (np.ndarray): Intrinsic matrix (only needed for DP).
-            output_size (tuple): Optional (width, height) to resize the depth output.
-
-        Returns:
-            depth (np.ndarray): Estimated depth map (in meters).
-        '''
-        assert image is not None or image_path is not None, 'You need to provide the image or the image path'
-        assert intrinsics is not None or intrinsics_path is not None, 'You need to provide the intrinsics or the intrinsics path'
-        if image is None:
-            image, _ = load_image(image_path)
-        if intrinsics is None:
-            intrinsics = load_intrinsics(intrinsics_path)
-
-        if self.model is None:
-            print('Initializing MDE...')
-            self.model, self.transform = depth_pro.create_model_and_transforms()
-            self.model.eval().to(self.device)
-        assert intrinsics is not None, 'We would highly recommend using knwon intrinsics, comment this out if you want Depth Pro to use estimated focal length'
-
-        f_px = intrinsics[0, 0] if intrinsics is not None else None
-        image_tensor = self.transform(image).to(self.device)
-        with torch.no_grad():
-            prediction = self.model.infer(image_tensor, f_px=f_px)
-            depth_tensor = prediction['depth']  # Depth in [m].
-            depth = depth_tensor.detach().cpu().numpy()  # Move to CPU and convert to NumPy
-
-        # Free depth and predictions from memory
-        if 'image_tensor' in locals(): del image_tensor
-        if 'depth_tensor' in locals(): del depth_tensor
-        if 'prediction' in locals(): del prediction
-
-        torch.cuda.empty_cache()
-
-        return depth
-    
 
 def normalize_depth_map(depth_map):
     '''
@@ -230,84 +171,6 @@ def visualize_multiple_depth_maps(image_file_path, depth_file_paths):
 
     # Show the figure
     plt.show()
-
-
-def create_depth_map(image_file_path, output_dir=None, visualize=True):
-    '''
-    Create depth maps from an input image using a monocular depth estimation model.
-
-    This function loads an image, runs it through a pre-trained depth prediction 
-    model (Depth Pro), normalizes and colorizes the depth map for visualization, 
-    and optionally saves the raw depth values. It can also display the original 
-    image alongside the predicted depth map.
-
-    Args:
-        image_file_path (str): Path to the input image file.
-        output_dir (str, optional): Directory where the estimated depth values 
-            will be saved as a `.npy` file. If None, results are not saved. 
-            Defaults to None.
-        visualize (bool, optional): Whether to display the original image and 
-            depth maps side-by-side in a window. Defaults to True.
-    '''
-
-    # Load the original image
-    original_image = cv2.imread(image_file_path)
-    height, width, _ = original_image.shape  # Get the dimensions of the original image
-
-    original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB) 
-
-    model, transform = depth_pro.create_model_and_transforms()
-    model.eval()
-    image, _, f_px = depth_pro.load_rgb(image_file_path)
-
-    # Load recorded focal length, if exist
-    intrinsics_path = os.path.join(
-        os.path.dirname(os.path.dirname(image_file_path)),  # Go two levels up
-        'cameraIntrinsics.json'
-    )
-    if os.path.exists(intrinsics_path):
-        with open(intrinsics_path, 'r') as f:
-            camera_intrinsics = json.load(f)['data']
-            f_px = camera_intrinsics[0][0]
-    else:
-        camera_intrinsics = create_intrinsic_matrix(f_px, width, height)
-
-    if isinstance(f_px, float):
-        f_px = torch.tensor(f_px, dtype=torch.float32)
-
-    image = transform(image)
-    prediction = model.infer(image, f_px=f_px)
-
-    # Estimate intrinsics (we found that it is better to use known intrinsics)
-    # estimated_f_px = prediction['focallength_px']
-    # estimated_f_px = estimated_f_px.detach().cpu().numpy()
-    # estimated_intrinsics = create_intrinsic_matrix(estimated_f_px, width, height)
-    
-    dp_depth = prediction['depth']  # Depth in [m].
-    dp_depth = dp_depth.detach().cpu().numpy()  # Move to CPU and convert to NumPy
-
-    # Save the combined result and depths
-    if output_dir is not None:
-        data_name = image_path.split('/')[-3]
-        os.makedirs(output_dir, exist_ok=True)
-        output_depths_path = os.path.join(output_dir, data_name + '.npy')
-
-        np.save(output_depths_path, dp_depth)
-        print(f'Estimated depths stored at: {output_depths_path}')
-
-    # Display the combined image
-    if visualize:
-        cmap = matplotlib.cm.get_cmap('Spectral_r')  # Get the colormap (e.g., Spectral_r)
-        dp_depth_normalized = normalize_depth_map(dp_depth)
-        dp_depth_colored = cmap(dp_depth_normalized / 255.0)  # Normalize to [0, 1] for colormap application
-        dp_depth_colored = (dp_depth_colored[:, :, :3] * 255).astype(np.uint8)  # Convert back to uint8 for OpenCV
-        
-        # Concatenate the original image with all depth maps
-        combined_image = cv2.hconcat([original_image, dp_depth_colored])
-
-        cv2.imshow('Original Image and Depth Maps', combined_image)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
 
 
 def detect_edges_on_depth_map(depth, method='canny', visualize=False):

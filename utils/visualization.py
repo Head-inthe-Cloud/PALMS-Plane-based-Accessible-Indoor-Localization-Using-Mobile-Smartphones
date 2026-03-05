@@ -159,7 +159,7 @@ def visualize(segments_1=None,
         plt.colorbar(im, label='Heatmap Intensity')
 
     if title is not None:
-        plt.title = title
+        plt.title(title)
 
     plt.axis('equal')
     if output_path is not None:

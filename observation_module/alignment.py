@@ -1,3 +1,6 @@
+import importlib.util
+from pathlib import Path
+
 import open3d as o3d
 import numpy as np
 import cv2
@@ -6,58 +9,73 @@ from scipy.optimize import minimize
 from scipy.stats import mode
 from sklearn.neighbors import NearestNeighbors
 
+# Load pose_utils from indoor_dataset (avoids conflict with PALMS utils)
+_pose_utils_path = Path(__file__).resolve().parents[2] / "utils" / "pose_utils.py"
+_spec = importlib.util.spec_from_file_location("pose_utils", _pose_utils_path)
+_pose_utils = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_pose_utils)
+pose_to_ypr = _pose_utils.pose_to_ypr
+ypr_to_pose = _pose_utils.ypr_to_pose
+ypr_to_pcd_pose = _pose_utils.ypr_to_pcd_pose
+aria_pose_to_pcd_pose = _pose_utils.aria_pose_to_pcd_pose
+OPENCV_TO_ARIA_CAM = _pose_utils.OPENCV_TO_ARIA_CAM
+ARKIT_TRANSFORM = _pose_utils.ARKIT_TRANSFORM
+
 from observation_module.ground_plane import detect_ground_plane
 from observation_module.pointcloud import subsample_point_cloud
 from utils.image_sampling import find_neighbors, is_overlap
 from utils.camera_utils import get_flip_matrix, get_homography_from_rotation
 
 
-def transform_point_cloud_to_world(pcd, pose):
-    """Transform a point cloud from camera frame to world frame.
+def transform_point_cloud_to_world_arkit(pcd, pose):
+    """Transform a point cloud from OpenCV camera frame to world frame (ARKit convention).
 
-    Applies coordinate frame conversion (flip Y and Z axes) and camera pose transformation.
+    Applies coordinate frame conversion (flip Y and Z axes) for ARKit camera frame:
+    OpenCV (X right, Y down, Z forward) -> ARKit (X right, Y up, Z backward).
 
     Args:
         pcd: Input point cloud in camera coordinates (modified in-place).
-        pose: 4x4 camera-to-world transformation matrix.
+        pose: 4x4 camera-to-world transformation matrix (ARKit convention).
         
     Raises:
         ValueError: If pose is not a 4x4 matrix.
     """
-
     if pose.shape != (4, 4):
         raise ValueError('Extrinsic matrix must be a 4x4 transformation matrix.')
 
     flip_matrix = get_flip_matrix(y=True, z=True)
     world_transform = pose @ flip_matrix
-
-    # Apply transformation to point cloud
     pcd.transform(world_transform)
 
 
-def transform_point_clouds_to_world(pcds, extrinsic_matrices):
-    """Transform multiple point clouds from camera frame to world frame.
+def transform_point_clouds_to_world_arkit(pcds, extrinsic_matrices):
+    """Transform multiple point clouds from camera frame to world frame (ARKit convention).
 
     Args:
         pcds: List of point clouds in camera coordinates (modified in-place).
-        extrinsic_matrices: Array of 4x4 camera-to-world transformation matrices.
+        extrinsic_matrices: Array of 4x4 camera-to-world transformation matrices (ARKit).
         
     Raises:
         ValueError: If any pose matrix is not 4x4.
     """
     assert len(pcds) == len(extrinsic_matrices)
     for i in range(len(pcds)):
-        pcd = pcds[i]
-        extrinsic_matrix = extrinsic_matrices[i]
+        transform_point_cloud_to_world_arkit(pcds[i], extrinsic_matrices[i])
 
-        if extrinsic_matrix.shape != (4, 4):
-            raise ValueError('Extrinsic matrix must be a 4x4 transformation matrix.')
 
-        flip_matrix = get_flip_matrix(y=True, z=True)
-        world_transform = extrinsic_matrix @ flip_matrix
+def transform_point_clouds_to_world_aria(pcds, extrinsic_matrices):
+    """Transform multiple point clouds from camera frame to world frame (Aria convention).
 
-        # Apply transformation to point cloud
-        pcd.transform(world_transform)
+    Args:
+        pcds: List of point clouds in camera coordinates (modified in-place).
+        extrinsic_matrices: Array of 4x4 camera-to-world transformation matrices (Aria).
+        
+    Raises:
+        ValueError: If any pose matrix is not 4x4.
+    """
+    assert len(pcds) == len(extrinsic_matrices)
+    for i in range(len(pcds)):
+        transform_point_cloud_to_world_aria(pcds[i], extrinsic_matrices[i])
 
 
 def ensure_normals(pcd):
@@ -574,14 +592,16 @@ def create_pcd_from_cropped_depth(depth, K, pose, crop_coords):
     z = cropped_depth.astype(np.float32)
     x = (u - cx) * z / fx
     y = (v - cy) * z / fy
-    points = np.stack((x, -y, -z), axis=-1).reshape(-1, 3)
+    # Use same convention as main pipeline: (x,y,z) OpenCV, then OPENCV_TO_ARIA_CAM
+    points = np.stack((x, y, z), axis=-1).reshape(-1, 3)
 
     valid = (z != 0)
     points = points[valid.reshape(-1)]
 
-    # Create Open3D point cloud
+    # Create Open3D point cloud: OpenCV->Aria, then pose (pose already includes ARKIT_TRANSFORM)
     pcd = o3d.geometry.PointCloud()
     pcd.points = o3d.utility.Vector3dVector(points)
+    pcd.transform(OPENCV_TO_ARIA_CAM)
     pcd.transform(pose)
 
     return pcd

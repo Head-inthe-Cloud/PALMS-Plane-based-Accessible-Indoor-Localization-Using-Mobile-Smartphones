@@ -22,7 +22,7 @@ from tqdm import tqdm
 from glob import glob
 import matplotlib.pyplot as plt
 
-from observation_module.depth import MDE
+from observation_module.depth_pro_estimator import MDE
 from utils.file_io import load_image
 
 import time
