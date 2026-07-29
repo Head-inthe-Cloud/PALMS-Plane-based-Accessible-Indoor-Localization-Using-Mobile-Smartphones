@@ -9,8 +9,19 @@ from scipy.optimize import minimize
 from scipy.stats import mode
 from sklearn.neighbors import NearestNeighbors
 
-# Load pose_utils from indoor_dataset (avoids conflict with PALMS utils)
-_pose_utils_path = Path(__file__).resolve().parents[2] / "utils" / "pose_utils.py"
+# Load SlugTrails pose_utils (avoids conflict with PALMS ``utils`` package).
+# PALMS lives under baseline_models/, so repo root is parents[3].
+_repo_root = Path(__file__).resolve().parents[3]
+_pose_utils_candidates = [
+    _repo_root / "nplh_utils" / "pose_utils.py",
+    _repo_root / "utils" / "pose_utils.py",  # legacy path
+]
+_pose_utils_path = next((p for p in _pose_utils_candidates if p.is_file()), None)
+if _pose_utils_path is None:
+    raise FileNotFoundError(
+        "Could not find pose_utils.py under nplh_utils/ or utils/ "
+        f"(searched from repo root {_repo_root})"
+    )
 _spec = importlib.util.spec_from_file_location("pose_utils", _pose_utils_path)
 _pose_utils = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_pose_utils)

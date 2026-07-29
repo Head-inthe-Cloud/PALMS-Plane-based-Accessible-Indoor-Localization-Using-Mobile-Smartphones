@@ -29,26 +29,27 @@ def draw_arrow(point, arrow):
     )
 
 
-def visualize(segments_1=None, 
-              segments_2=None, 
-              segments_3=None, 
-              l1=None, 
-              l2=None, 
-              L1=None, 
-              L2=None, 
-              T=None, 
-              points_1=None, 
+def visualize(segments_1=None,
+              segments_1_alpha=1.0,
+              segments_2=None,
+              segments_3=None,
+              l1=None,
+              l2=None,
+              L1=None,
+              L2=None,
+              T=None,
+              points_1=None,
               points_2=None,
               points_group=None,
               point_1=None,
               point_2=None,
               arrow_1=None,
               arrow_2=None,
-              heatmap_1 = None,
-              heatmap_2 = None,
-              img_1 = None,
-              img_2 = None,
-              title=None, 
+              heatmap_1=None,
+              heatmap_2=None,
+              img_1=None,
+              img_2=None,
+              title=None,
               output_path=None,
               block=True):
     """Visualize geometric data including segments, points, heatmaps, and images.
@@ -58,7 +59,7 @@ def visualize(segments_1=None,
     
     Args:
         segments_1: Line segments to plot in black.
-        segments_2: Line segments to plot in purple.
+        segments_2: Line segments to plot in orange.
         segments_3: Line segments to plot in orange.
         l1, l2: Line segments to plot in red (optionally transformed by T).
         L1, L2: Line segments to plot in green.
@@ -88,11 +89,11 @@ def visualize(segments_1=None,
     # Create the plot
     if segments_1 is not None:
         for seg in segments_1:
-            plt.plot(*zip(*seg), color='black')
+            plt.plot(*zip(*seg), color='black', alpha=segments_1_alpha)
 
     if segments_2 is not None:
         for seg in segments_2:
-            plt.plot(*zip(*seg), color='purple')
+            plt.plot(*zip(*seg), color='orange')
 
     if segments_3 is not None:
         for seg in segments_3:
